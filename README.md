@@ -41,7 +41,7 @@ AgentFlow/
 
 - **Week 1: Foundation, Profile, and Product Skeleton**
   - **[x] Phase 1**: Project Architecture, Monorepo Foundation & Open Source Stack
-  - **[ ] Phase 2**: PostgreSQL Database Schema & Relational Models
+  - **[x] Phase 2**: PostgreSQL Database Schema & Relational Models (Alembic Migrations)
   - **[ ] Phase 3**: Typed Agent & Domain Contracts
   - **[ ] Phase 4**: LangGraph Workflow Skeleton & Checkpointing
   - **[ ] Phase 5**: Backend API & Resume Extraction Pipeline

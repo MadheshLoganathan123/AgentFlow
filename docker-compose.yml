@@ -22,6 +22,17 @@ services:
     networks:
       - agentflow-network
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: agentflow-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - agentflow-network
+
   api:
     build:
       context: .
@@ -39,6 +50,10 @@ services:
       - DATABASE_URL_SYNC=postgresql+psycopg2://${POSTGRES_USER:-agentflow}:${POSTGRES_PASSWORD:-agentflow_dev_password}@postgres:5432/${POSTGRES_DB:-agentflow}
       - API_HOST=0.0.0.0
       - API_PORT=8000
+      - OPENAI_API_BASE=http://ollama:11434/v1
+      - OPENAI_API_KEY=not-needed-for-local
+      - LLM_MODEL_NAME=llama3.2:1b
+      - EMBEDDING_MODEL_NAME=all-minilm
     volumes:
       - ./services/api:/app/services/api
       - ./services/orchestrator:/app/services/orchestrator
@@ -66,8 +81,8 @@ services:
 volumes:
   postgres_data:
   uploads_data:
+  ollama_data:
 
 networks:
   agentflow-network:
     driver: bridge
-

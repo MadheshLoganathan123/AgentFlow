@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     max_upload_size_mb: int = 15
     local_storage_path: str = "./uploads"
 
+    # Open Source Lightweight LLM Configuration (Option 1)
+    llm_provider: str = "ollama"
+    openai_api_key: str = "not-needed-for-local"
+    openai_api_base: str = "http://localhost:11434/v1"
+    llm_model_name: str = "llama3.2:1b"
+    embedding_model_name: str = "all-minilm"
+
 
 settings = Settings()
 

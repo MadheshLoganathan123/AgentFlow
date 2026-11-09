@@ -16,12 +16,13 @@
 
 ---
 
-### [ ] Phase 2: PostgreSQL Schema & Relational Models
+### [x] Phase 2: PostgreSQL Schema & Relational Models (COMPLETED)
 - **Scope**:
-  - Authoritative relational tables in SQLAlchemy 2.0: `users`, `candidate_profiles`, `profile_evidence`, `preferences`, `job_sources`, `job_listings`, `workflow_checkpoints`, `approvals`, `audit_events`.
-  - pgvector embedding schema integration for semantic profile and job matching.
-  - Alembic migration environment and initial migration scripts.
-  - User-data isolation checks and database session fixtures for automated tests.
+  - Authoritative relational tables in SQLAlchemy 2.0 covering all 20 required entities: `users`, `candidate_profiles`, `profile_evidence`, `preferences`, `job_sources`, `job_listings`, `job_matches`, `saved_jobs`, `application_packages`, `applications`, `application_events`, `email_drafts`, `research_sources`, `interview_plans`, `mock_interviews`, `agent_runs`, `workflow_checkpoints`, `approvals`, `audit_events`, `model_usage`.
+  - pgvector embedding schema integration (`SafeVector` with dimension 1536) for semantic retrieval.
+  - Alembic migration environment (`alembic.ini`, `env.py`, `001_initial_schema.py`) with PostgreSQL vector extension initialization and downgrade rollback support.
+  - Complete repository layer (`UserRepository`, `ProfileRepository`, `CheckpointRepository`, `AuditEventRepository`, `JobRepository`) enforcing user-data isolation at the query layer.
+  - Cross-account isolation and anti-tampering test suite passing.
 
 ---
 
