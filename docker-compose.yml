@@ -1,0 +1,73 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: agentflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-agentflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agentflow_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-agentflow}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./packages/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-agentflow} -d ${POSTGRES_DB:-agentflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - agentflow-network
+
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    container_name: agentflow-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      - ENVIRONMENT=development
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-agentflow}:${POSTGRES_PASSWORD:-agentflow_dev_password}@postgres:5432/${POSTGRES_DB:-agentflow}
+      - DATABASE_URL_SYNC=postgresql+psycopg2://${POSTGRES_USER:-agentflow}:${POSTGRES_PASSWORD:-agentflow_dev_password}@postgres:5432/${POSTGRES_DB:-agentflow}
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    volumes:
+      - ./services/api:/app/services/api
+      - ./services/orchestrator:/app/services/orchestrator
+      - ./packages/contracts:/app/packages/contracts
+      - ./packages/db:/app/packages/db
+      - uploads_data:/app/uploads
+    networks:
+      - agentflow-network
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: agentflow-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    networks:
+      - agentflow-network
+
+volumes:
+  postgres_data:
+  uploads_data:
+
+networks:
+  agentflow-network:
+    driver: bridge
+

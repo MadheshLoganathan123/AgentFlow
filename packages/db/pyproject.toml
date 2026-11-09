@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentflow-db"
+version = "0.1.0"
+description = "Authoritative relational persistence and pgvector models for AgentFlow"
+requires-python = ">=3.11"
+dependencies = [
+    "sqlalchemy>=2.0.30",
+    "alembic>=1.13.1",
+    "asyncpg>=0.29.0",
+    "psycopg2-binary>=2.9.9",
+    "pgvector>=0.2.5"
+]
+
