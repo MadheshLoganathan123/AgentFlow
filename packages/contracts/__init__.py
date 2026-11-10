@@ -1,3 +1,11 @@
+from packages.contracts.agent import (
+    AgentExecutionMetadata,
+    AgentRole,
+    AgentRunRecord,
+    AgentRunStatus,
+    TokenUsage,
+    ToolCallRecord,
+)
 from packages.contracts.application import (
     ApplicationPackage,
     ApplicationReadiness,
@@ -12,10 +20,19 @@ from packages.contracts.interview import (
     InterviewPlan,
     InterviewQuestion,
     PracticeFeedback,
+    QuestionSet,
+    ResearchSource,
     SourceCitation,
 )
 from packages.contracts.job import JobListing, JobSeniority, WorkMode
 from packages.contracts.match import MatchExplanation, RequirementMatch, ScoreBreakdown
+from packages.contracts.policy import (
+    PolicyCheckType,
+    PolicyReviewResult,
+    PolicySeverity,
+    PolicyViolation,
+    PrivacyRedaction,
+)
 from packages.contracts.profile import (
     CandidateProfile,
     Education,
@@ -60,6 +77,8 @@ __all__ = [
     "EmailType",
     "InterviewPlan",
     "InterviewQuestion",
+    "QuestionSet",
+    "ResearchSource",
     "PracticeFeedback",
     "SourceCitation",
     "ApprovalRequest",
@@ -67,5 +86,17 @@ __all__ = [
     "AuditEvent",
     "WorkflowStage",
     "WorkflowState",
+    "PolicyCheckType",
+    "PolicySeverity",
+    "PolicyViolation",
+    "PrivacyRedaction",
+    "PolicyReviewResult",
+    "AgentExecutionMetadata",
+    "AgentRole",
+    "AgentRunStatus",
+    "ToolCallRecord",
+    "TokenUsage",
+    "AgentRunRecord",
 ]
+
 

@@ -15,6 +15,22 @@ class SourceCitation(BaseModel):
     is_company_specific: bool = True
 
 
+class ResearchSource(VersionedBaseModel):
+    """
+    Research source curated by the Research and Interview Coach.
+    Preserves source URL, retrieval timestamp, author/domain, and trustworthiness classification.
+    """
+    source_url: str
+    source_title: str
+    source_domain: str
+    retrieved_at: datetime = Field(default_factory=utc_now)
+    publication_date: Optional[str] = None
+    is_reputable: bool = True
+    is_company_specific: bool = True
+    content_excerpt: str
+    source_reliability_score: float = Field(default=1.0, ge=0.0, le=1.0)
+
+
 class InterviewQuestion(BaseModel):
     id: str
     category: str = Field(..., description="'behavioral', 'system_design', 'technical', 'company_specific'")
@@ -23,7 +39,19 @@ class InterviewQuestion(BaseModel):
     rubric_points: List[str] = Field(default_factory=list)
 
 
-class PracticeFeedback(BaseModel):
+class QuestionSet(VersionedBaseModel):
+    """
+    Curated question set by role, seniority, and practice rubric.
+    """
+    id: Optional[str] = None
+    role_title: str
+    seniority: str
+    estimated_time_minutes: int = 45
+    questions: List[InterviewQuestion] = Field(default_factory=list)
+    evaluation_rubric_summary: str = "Evaluated on clarity, impact metrics, technical correctness, and structure"
+
+
+class PracticeFeedback(VersionedBaseModel):
     question_id: str
     answer_text: str
     strengths: List[str] = Field(default_factory=list)
@@ -42,6 +70,9 @@ class InterviewPlan(VersionedBaseModel):
     seniority: str
     company_research_summary: str
     citations: List[SourceCitation] = Field(default_factory=list)
+    sources: List[ResearchSource] = Field(default_factory=list)
+    question_sets: List[QuestionSet] = Field(default_factory=list)
     questions: List[InterviewQuestion] = Field(default_factory=list)
     feedback_history: List[PracticeFeedback] = Field(default_factory=list)
+
 
