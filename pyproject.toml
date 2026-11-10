@@ -54,12 +54,6 @@ include = ["packages*", "services*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = [
-    ".",
-    "packages/contracts",
-    "packages/db",
-    "services/api",
-    "services/orchestrator"
-]
+pythonpath = ["."]
 asyncio_mode = "auto"
 
