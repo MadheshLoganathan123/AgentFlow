@@ -69,7 +69,7 @@ jobs:
 
       - name: Verify Test Imports
         run: |
-          python -c "import packages.db.base; import packages.db.models; print('DB models OK')"
+          python -c "import packages.db.base; import packages.db.models; import packages.db.session; print('DB models & session OK')"
           python -c "import packages.contracts; print('Contracts OK')"
           python -c "import services.orchestrator; print('Orchestrator OK')"
 

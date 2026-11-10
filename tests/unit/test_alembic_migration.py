@@ -3,8 +3,15 @@ from pathlib import Path
 
 
 def test_alembic_initial_migration_syntax_and_structure():
-    migration_path = Path("packages/db/migrations/versions/001_initial_schema.py")
-    assert migration_path.exists(), "Migration script 001_initial_schema.py does not exist."
+    migration_path = (
+        Path(__file__).resolve().parent.parent.parent
+        / "packages"
+        / "db"
+        / "migrations"
+        / "versions"
+        / "001_initial_schema.py"
+    )
+    assert migration_path.exists(), f"Migration script {migration_path} does not exist."
 
     # Dynamically import the migration module
     spec = importlib.util.spec_from_file_location("migration_001", migration_path)
