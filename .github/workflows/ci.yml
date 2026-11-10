@@ -63,10 +63,10 @@ jobs:
 
       - name: Run Tests with Coverage
         env:
-          DATABASE_URL: sqlite+aiosqlite:///:memory:
-          DATABASE_URL_SYNC: sqlite:///:memory:
-          LANGGRAPH_CHECKPOINT_SAVER: memory
-          ENVIRONMENT: testing
+          DATABASE_URL: "sqlite+aiosqlite:///:memory:"
+          DATABASE_URL_SYNC: "sqlite:///:memory:"
+          LANGGRAPH_CHECKPOINT_SAVER: "memory"
+          ENVIRONMENT: "testing"
         run: |
           pytest tests/ -v
 
