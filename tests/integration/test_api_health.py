@@ -1,3 +1,5 @@
+import io
+
 from fastapi.testclient import TestClient
 
 from services.api.main import app
@@ -24,9 +26,9 @@ def test_health_endpoint():
 def test_resume_upload_and_confirmation_flow():
     resume_payload = {
         "raw_text": "Alex Developer\nSenior Full Stack Developer at OpenTech\nSkills: Python, React, PostgreSQL",
-        "user_id": "usr_alex_01"
+        "user_id": "usr_alex_01",
     }
-    # 1. Upload resume
+    # 1. Upload resume text
     upload_res = client.post("/api/v1/profile/upload-resume", data=resume_payload)
     assert upload_res.status_code == 201
     upload_data = upload_res.json()
@@ -46,7 +48,7 @@ def test_resume_upload_and_confirmation_flow():
     # 3. Confirm profile (human approval gate)
     confirm_payload = {
         "user_feedback": "All facts approved.",
-        "confirmed_fields": {"work_authorization": "Citizen"}
+        "confirmed_fields": {"work_authorization": "Citizen"},
     }
     confirm_res = client.post(f"/api/v1/profile/{profile_id}/confirm", json=confirm_payload)
     assert confirm_res.status_code == 200
@@ -54,3 +56,19 @@ def test_resume_upload_and_confirmation_flow():
     assert confirmed_data["is_profile_confirmed"] is True
     assert confirmed_data["work_authorization"] == "Citizen"
 
+
+def test_resume_file_upload_multipart():
+    """Verify multipart file upload of resume."""
+    file_content = (
+        b"Morgan Lee\nEmail: morgan@example.com\nLead Cloud Architect at ScaleCorp\nSkills: Python, AWS, Docker"
+    )
+    files = {"file": ("morgan_resume.txt", io.BytesIO(file_content), "text/plain")}
+    data = {"user_id": "usr_morgan_99"}
+
+    res = client.post("/api/v1/profile/upload-resume", files=files, data=data)
+    assert res.status_code == 201
+    res_data = res.json()
+    assert res_data["profile"]["full_name"] == "Morgan Lee"
+    assert res_data["profile"]["email"] == "morgan@example.com"
+    assert res_data["profile"]["user_id"] == "usr_morgan_99"
+    assert res_data["workflow_id"].startswith("wf_")
