@@ -56,7 +56,7 @@ def test_job_listing_contract():
         organization="TechCorp",
         location="Remote",
         work_mode=WorkMode.REMOTE,
-        senority=JobSeniority.SENIOR,
+        seniority=JobSeniority.SENIOR,
         description_text="Looking for a Python/Next.js engineer...",
         destination_url="https://techcorp.example/jobs/1",
         source_name="greenhouse",
@@ -64,6 +64,7 @@ def test_job_listing_contract():
         content_hash="a1b2c3d4e5f6g7h8"
     )
     assert job.title == "Full Stack Engineer"
+    assert job.seniority == JobSeniority.SENIOR
     assert job.source_name == "greenhouse"
     assert job.content_hash == "a1b2c3d4e5f6g7h8"
 

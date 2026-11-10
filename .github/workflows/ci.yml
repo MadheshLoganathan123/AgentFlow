@@ -67,8 +67,9 @@ jobs:
           DATABASE_URL_SYNC: "sqlite:///:memory:"
           LANGGRAPH_CHECKPOINT_SAVER: "memory"
           ENVIRONMENT: "testing"
+          PYTHONPATH: "."
         run: |
-          pytest tests/ -v
+          python -m pytest tests/ -v
 
   container-build:
     name: Container Build Verification
