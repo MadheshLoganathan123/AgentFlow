@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 
+import packages.db.models  # noqa: F401 — registers all ORM models into Base.metadata
 from packages.db.base import Base
 
 

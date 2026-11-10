@@ -14,7 +14,16 @@ from packages.db.repositories import (
 @pytest_asyncio.fixture
 async def async_test_session():
     """Create an isolated in-memory SQLite database session for repository testing."""
-    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    from sqlalchemy.pool import StaticPool
+
+    # StaticPool ensures all connections share the same in-memory DB instance,
+    # so schema created in one connection is visible to subsequent connections.
+    engine = create_async_engine(
+        "sqlite+aiosqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+        echo=False,
+    )
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
