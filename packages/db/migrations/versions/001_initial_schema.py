@@ -1,14 +1,14 @@
 """001_initial_schema: create authoritative relational tables and pgvector support
 
 Revision ID: 001_initial_schema
-Revises: 
+Revises:
 Create Date: 2026-11-09 22:15:00.000000
 
 """
 from typing import Sequence, Union
-from alembic import op
+
 import sqlalchemy as sa
-from sqlalchemy.dialects import postgresql
+from alembic import op
 
 revision: str = "001_initial_schema"
 down_revision: Union[str, None] = None

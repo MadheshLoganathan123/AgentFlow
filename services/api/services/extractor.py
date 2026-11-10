@@ -1,7 +1,9 @@
 import io
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional
+
 from pypdf import PdfReader
+
 from packages.contracts.base import EvidenceReference
 from packages.contracts.profile import (
     CandidateProfile,
@@ -25,7 +27,7 @@ class ResumeExtractorService:
         """Extract plain text from uploaded PDF bytes using pypdf."""
         reader = PdfReader(io.BytesIO(pdf_bytes))
         extracted_pages = []
-        for idx, page in enumerate(reader.pages):
+        for page in reader.pages:
             text = page.extract_text() or ""
             extracted_pages.append(text)
         return "\n".join(extracted_pages).strip()

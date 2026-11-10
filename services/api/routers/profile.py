@@ -1,9 +1,11 @@
 import uuid
 from typing import Any, Dict, Optional
+
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel
+
 from packages.contracts.base import utc_now
-from packages.contracts.profile import CandidateProfile, VerificationState
+from packages.contracts.profile import CandidateProfile
 from services.api.services.extractor import ResumeExtractorService
 from services.orchestrator.workflow import ProfileOnboardingWorkflow
 
@@ -43,7 +45,7 @@ async def upload_resume(
             try:
                 extracted_text = ResumeExtractorService.extract_text_from_pdf(file_bytes)
             except Exception as e:
-                raise HTTPException(status_code=400, detail=f"Failed to extract PDF text: {str(e)}")
+                raise HTTPException(status_code=400, detail=f"Failed to extract PDF text: {str(e)}") from e
         else:
             extracted_text = file_bytes.decode("utf-8", errors="ignore")
     elif raw_text:

@@ -1,6 +1,5 @@
 import uuid
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -14,6 +13,7 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import relationship
+
 from packages.db.base import Base, TimestampMixin, utc_now
 from packages.db.types import SafeVector
 

@@ -1,28 +1,6 @@
-import pytest
 from sqlalchemy import create_engine
+
 from packages.db.base import Base
-from packages.db.models import (
-    User,
-    CandidateProfileModel,
-    ProfileEvidenceModel,
-    PreferenceModel,
-    JobSourceModel,
-    JobListingModel,
-    JobMatchModel,
-    SavedJobModel,
-    ApplicationPackageModel,
-    ApplicationModel,
-    ApplicationEventModel,
-    EmailDraftModel,
-    ResearchSourceModel,
-    InterviewPlanModel,
-    MockInterviewModel,
-    AgentRunModel,
-    WorkflowCheckpointModel,
-    ApprovalModel,
-    AuditEventModel,
-    ModelUsageModel,
-)
 
 
 def test_all_twenty_models_registered_in_metadata():

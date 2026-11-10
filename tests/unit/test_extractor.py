@@ -1,5 +1,5 @@
-from services.api.services.extractor import ResumeExtractorService
 from packages.contracts.profile import VerificationState
+from services.api.services.extractor import ResumeExtractorService
 
 SAMPLE_RESUME_TEXT = """
 Jane Doe

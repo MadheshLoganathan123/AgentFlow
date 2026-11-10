@@ -1,6 +1,7 @@
 import json
 from typing import Any, List, Optional
-from sqlalchemy import JSON, Text, TypeDecorator
+
+from sqlalchemy import JSON, TypeDecorator
 from sqlalchemy.dialects.postgresql import JSONB
 
 try:

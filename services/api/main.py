@@ -1,6 +1,6 @@
-import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from services.api.config import settings
 from services.api.routers import health, profile
 

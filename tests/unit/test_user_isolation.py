@@ -1,8 +1,8 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from packages.db.base import Base
 from packages.db.repositories import (
-    AuditEventRepository,
     CheckpointRepository,
     ProfileRepository,
     UserRepository,

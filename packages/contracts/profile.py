@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import List, Optional
+
 from pydantic import BaseModel, Field
-from packages.contracts.base import EvidenceReference, VersionedBaseModel, utc_now
+
+from packages.contracts.base import EvidenceReference, VersionedBaseModel
 
 
 class WorkModePreference(str, Enum):

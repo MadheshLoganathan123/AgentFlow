@@ -1,7 +1,9 @@
 from typing import Any, Dict, List, Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+
 from packages.db.base import utc_now
 from packages.db.models import CandidateProfileModel, ProfileEvidenceModel
 

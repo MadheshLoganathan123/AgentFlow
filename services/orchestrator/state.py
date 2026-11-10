@@ -1,6 +1,4 @@
 from typing import Any, Dict, List, Optional, TypedDict
-from packages.contracts.profile import CandidateProfile
-from packages.contracts.workflow import ApprovalRequest, AuditEvent, WorkflowStage
 
 
 class AgentFlowWorkflowState(TypedDict, total=False):

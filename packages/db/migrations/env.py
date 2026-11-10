@@ -1,11 +1,13 @@
 import os
 from logging.config import fileConfig
+
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+import packages.db.models  # noqa: F401
+
 # Ensure models are imported so their metadata is loaded
 from packages.db.base import Base
-import packages.db.models  # noqa: F401
 
 config = context.config
 

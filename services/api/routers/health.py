@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
+
 from fastapi import APIRouter, status
 from pydantic import BaseModel
+
 from services.api.config import settings
 
 router = APIRouter(tags=["Health"])

@@ -1,9 +1,7 @@
-from packages.contracts.base import EvidenceReference, VersionedBaseModel
-from packages.contracts.profile import CandidateProfile, SkillItem, VerificationState
-from packages.contracts.job import JobListing, WorkMode, JobSeniority
-from packages.contracts.match import MatchExplanation, ScoreBreakdown
 from packages.contracts.application import ApplicationReadiness, ReadinessBlocker
-from packages.contracts.workflow import WorkflowState, WorkflowStage
+from packages.contracts.base import EvidenceReference, VersionedBaseModel
+from packages.contracts.job import JobListing, JobSeniority, WorkMode
+from packages.contracts.profile import CandidateProfile, SkillItem, VerificationState
 
 
 def test_base_contract_versioning():
