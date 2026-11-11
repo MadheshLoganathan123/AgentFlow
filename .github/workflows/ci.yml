@@ -40,7 +40,7 @@ jobs:
 
       - name: Lint Frontend
         working-directory: apps/web
-        run: npm run lint || true
+        run: npm run lint
 
   test-backend:
     name: Unit & Integration Tests

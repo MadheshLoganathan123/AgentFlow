@@ -11,7 +11,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN mkdir -p public
-RUN npm run build || true
+RUN npm run build
 
 EXPOSE 3000
 ENV PORT=3000

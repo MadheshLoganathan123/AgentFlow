@@ -108,3 +108,4 @@ class OllamaClient:
         except Exception as e:
             logger.warning("Ollama extraction encountered error (%s), using deterministic parser.", e)
             return None
+
