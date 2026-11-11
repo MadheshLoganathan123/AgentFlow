@@ -50,9 +50,9 @@ from packages.contracts.profile import (
 
 def test_base_contract_versioning():
     """Ensure all models inherit versioning, open-source model provenance, and UTC timestamps."""
-    model = VersionedBaseModel(model_version="llama3.2:1b", prompt_version="v1.2.0")
+    model = VersionedBaseModel(model_version="open_source_extractor:v1", prompt_version="v1.2.0")
     assert model.schema_version == "1.0.0"
-    assert model.model_version == "llama3.2:1b"
+    assert model.model_version == "open_source_extractor:v1"
     assert model.prompt_version == "v1.2.0"
     assert model.created_at is not None
     assert model.created_at.tzinfo == timezone.utc
@@ -429,7 +429,7 @@ def test_agent_execution_metadata_and_run_record():
         workflow_id="wf_profile_001",
         user_id="usr_123",
         status=AgentRunStatus.SUCCESS,
-        model_name="llama3.2:1b",
+        model_name="open_source_extractor:v1",
         prompt_version="v1.0.0",
         inputs_payload={"resume_bytes_len": 4096},
         outputs_payload={"parsed_skills_count": 8},
@@ -448,7 +448,7 @@ def test_agent_execution_metadata_and_run_record():
     )
 
     assert record.agent_role == AgentRole.PROFILE_ANALYST
-    assert record.model_name == "llama3.2:1b"
+    assert record.model_name == "open_source_extractor:v1"
     assert record.status == AgentRunStatus.SUCCESS
     assert len(record.tool_calls) == 1
     assert record.tool_calls[0].is_success is True

@@ -1,12 +1,10 @@
 import io
 import zipfile
-from unittest.mock import AsyncMock, patch
 
 import pytest
 
 from packages.contracts.profile import VerificationState
 from services.api.services.extractor import ResumeExtractorService
-from services.api.services.ollama_client import OllamaClient
 
 SAMPLE_RESUME_TEXT = """
 Jane Doe
@@ -146,20 +144,21 @@ def test_evidence_grounding_integrity():
 
 
 @pytest.mark.asyncio
-async def test_ollama_client_offline_fallback():
-    """Ensure OllamaClient gracefully returns None when local daemon is offline."""
-    client = OllamaClient(base_url="http://127.0.0.1:59999", timeout=0.5)
-
-    is_online = await client.is_available()
-    assert is_online is False
-
-    result = await client.extract_structured_resume("Candidate resume text", timeout_override=0.5)
-    assert result is None
+async def test_parse_profile_async_pure_local():
+    """Ensure async parsing operates 100% locally with zero external model daemons."""
+    profile = await ResumeExtractorService.parse_profile_async(
+        SAMPLE_RESUME_TEXT,
+        user_id="usr_async_01",
+    )
+    assert profile.user_id == "usr_async_01"
+    assert profile.model_version == "deterministic_extractor:v1"
+    assert profile.full_name == "Jane Doe"
+    assert len(profile.skills) >= 4
 
 
 @pytest.mark.asyncio
-async def test_parse_profile_async_with_mocked_ollama():
-    """Test async parsing fusing LLM output with deterministic verification."""
+async def test_parse_profile_async_with_inferred_fields():
+    """Test async parsing with estimated or inferred fields when years not explicit in text."""
     resume_without_explicit_years = """
     Sarah Connor
     Email: sarah.connor@sky.net
@@ -170,25 +169,14 @@ async def test_parse_profile_async_with_mocked_ollama():
     - Led research on autonomous reinforcement learning algorithms.
     """
 
-    mock_llm_json = {
-        "full_name": "Dr. Sarah Connor",
-        "email": "sarah.connor@sky.net",
-        "primary_location": "Los Angeles, CA",
-        "total_years_experience": 8.0,
-        "target_job_titles": ["Principal AI Systems Engineer"],
-    }
+    profile = await ResumeExtractorService.parse_profile_async(
+        resume_without_explicit_years,
+        user_id="usr_sarah_01",
+        extra_fields={"total_years_experience": 8.0, "full_name": "Dr. Sarah Connor"},
+    )
 
-    with patch.object(OllamaClient, "extract_structured_resume", new_callable=AsyncMock) as mock_extract:
-        mock_extract.return_value = mock_llm_json
-
-        profile = await ResumeExtractorService.parse_profile_async(
-            resume_without_explicit_years,
-            user_id="usr_sarah_01",
-            use_llm=True,
-        )
-
-        assert profile.user_id == "usr_sarah_01"
-        assert profile.model_version == "llama3.2:1b"
-        assert profile.full_name == "Dr. Sarah Connor"
-        assert profile.total_years_experience == 8.0
-        assert any("total_years_experience: 8.0 (inferred by LLM)" in inf for inf in profile.inferred_fields)
+    assert profile.user_id == "usr_sarah_01"
+    assert profile.model_version == "deterministic_extractor:v1"
+    assert profile.full_name == "Dr. Sarah Connor"
+    assert profile.total_years_experience == 8.0
+    assert any("total_years_experience: 8.0 (inferred)" in inf for inf in profile.inferred_fields)

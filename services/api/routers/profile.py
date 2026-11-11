@@ -144,7 +144,7 @@ async def get_profile(
             repo = ProfileRepository(session)
             db_profile = await repo.get_by_id_for_user(profile_id, user_id)
             if db_profile and db_profile.structured_data:
-                return CandidateProfile(**db_profile.structured_data)
+                return CandidateProfile.model_validate(db_profile.structured_data)
         except Exception:
             pass
 

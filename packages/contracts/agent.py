@@ -50,7 +50,7 @@ class AgentExecutionMetadata(BaseModel):
     """
     Standard metadata captured per agent run execution.
     """
-    model_name: str = Field(default="llama3.2:1b", description="Local open source model identifier")
+    model_name: str = Field(default="open_source_extractor:v1", description="Local open source model or extractor identifier")
     model_version: Optional[str] = None
     prompt_version: str = Field(default="v1.0.0")
     tool_calls: List[ToolCallRecord] = Field(default_factory=list)
@@ -75,8 +75,8 @@ class AgentRunRecord(VersionedBaseModel):
     user_id: str
     status: AgentRunStatus = AgentRunStatus.PENDING
 
-    # Provenance (Open source local models default)
-    model_name: str = Field(default="llama3.2:1b", description="e.g. 'llama3.2:1b', 'all-minilm'")
+    # Provenance (Open source local models or deterministic engines)
+    model_name: str = Field(default="open_source_extractor:v1", description="e.g. 'open_source_extractor:v1', 'all-minilm'")
     prompt_version: str = Field(default="v1.0.0")
 
     # Inputs & Outputs

@@ -18,7 +18,6 @@ from packages.contracts.profile import (
     WorkExperience,
     WorkModePreference,
 )
-from services.api.services.ollama_client import OllamaClient
 
 logger = logging.getLogger("agentflow.extractor")
 
@@ -27,9 +26,9 @@ class ResumeExtractorService:
     """
     Open-source text extraction and profile structuring engine for AgentFlow.
     Supports PDF (via pypdf and pdfplumber), DOCX (via pure zip/XML parsing), and text.
-    Uses local lightweight LLM (llama3.2:1b) when available, and provides deterministic
-    evidence-grounded heuristic parsing to guarantee zero hallucinations and strict
-    separation of verified resume facts from inferences and missing fields.
+    Provides deterministic evidence-grounded parsing running 100% locally on CPU without
+    heavy external model daemons, guaranteeing zero hallucinations and strict separation
+    of verified resume facts from inferences and missing fields.
     """
 
     @classmethod
@@ -116,49 +115,42 @@ class ResumeExtractorService:
         cls,
         raw_text: str,
         user_id: str = "default-user",
-        use_llm: bool = True,
-        ollama_client: Optional[OllamaClient] = None,
+        extra_fields: Optional[Dict[str, Any]] = None,
     ) -> CandidateProfile:
         """
-        Parse raw resume text into a structured CandidateProfile.
-        Attempts open-source lightweight model (llama3.2:1b) extraction first when enabled,
-        and fuses with deterministic evidence verification to ensure evidence grounding.
+        Asynchronously parse raw resume text into a structured CandidateProfile.
+        Operates 100% locally with zero external background daemon dependencies.
         """
-        llm_data = None
-        if use_llm:
-            client = ollama_client or OllamaClient()
-            llm_data = await client.extract_structured_resume(raw_text)
-
-        return cls.parse_profile(raw_text, user_id=user_id, llm_data=llm_data)
+        return cls.parse_profile(raw_text, user_id=user_id, extra_fields=extra_fields)
 
     @classmethod
     def parse_profile(
         cls,
         raw_text: str,
         user_id: str = "default-user",
-        llm_data: Optional[Dict[str, Any]] = None,
+        extra_fields: Optional[Dict[str, Any]] = None,
     ) -> CandidateProfile:
         """
         Synchronous deterministic profile parser.
         Extracts verified facts from the resume text and rigorously distinguishes them
-        from model inferences and missing fields.
+        from inferences and missing fields.
         """
         # 1. Contact and identity
-        email = (llm_data.get("email") if (llm_data and llm_data.get("email")) else cls._extract_email(raw_text))
-        phone = (llm_data.get("phone") if (llm_data and llm_data.get("phone")) else cls._extract_phone(raw_text))
-        name = (llm_data.get("full_name") if (llm_data and llm_data.get("full_name")) else cls._extract_name(raw_text, email))
+        email = (extra_fields.get("email") if (extra_fields and extra_fields.get("email")) else cls._extract_email(raw_text))
+        phone = (extra_fields.get("phone") if (extra_fields and extra_fields.get("phone")) else cls._extract_phone(raw_text))
+        name = (extra_fields.get("full_name") if (extra_fields and extra_fields.get("full_name")) else cls._extract_name(raw_text, email))
 
         # 2. Extract facts from resume text
         skills = cls._extract_skills(raw_text)
         experiences = cls._extract_experience(raw_text)
         education = cls._extract_education(raw_text)
-        location = cls._extract_location(raw_text) or (llm_data.get("primary_location") if llm_data else "Remote / Flexible")
+        location = cls._extract_location(raw_text) or (extra_fields.get("primary_location") if extra_fields else "Remote / Flexible")
 
         # 3. Work modes and target job titles
         work_modes = cls._extract_work_modes(raw_text)
         target_titles = [exp.title for exp in experiences if exp.title]
-        if not target_titles and llm_data and llm_data.get("target_job_titles"):
-            target_titles = [str(t) for t in llm_data["target_job_titles"]]
+        if not target_titles and extra_fields and extra_fields.get("target_job_titles"):
+            target_titles = [str(t) for t in extra_fields["target_job_titles"]]
         if not target_titles:
             target_titles = ["Software Engineer"]
 
@@ -168,10 +160,10 @@ class ResumeExtractorService:
 
         # Calculate or infer years of experience
         total_years = cls._calculate_years_of_experience(raw_text, experiences)
-        if total_years is None and llm_data and llm_data.get("total_years_experience") is not None:
+        if total_years is None and extra_fields and extra_fields.get("total_years_experience") is not None:
             try:
-                total_years = float(llm_data["total_years_experience"])
-                inferred_fields.append(f"total_years_experience: {total_years} (inferred by LLM)")
+                total_years = float(extra_fields["total_years_experience"])
+                inferred_fields.append(f"total_years_experience: {total_years} (inferred)")
             except (ValueError, TypeError):
                 total_years = 1.0
         elif total_years is None:
@@ -224,7 +216,7 @@ class ResumeExtractorService:
             )
         )
 
-        model_version = "llama3.2:1b" if llm_data else "deterministic_extractor:v1"
+        model_version = "deterministic_extractor:v1"
 
         return CandidateProfile(
             user_id=user_id,
