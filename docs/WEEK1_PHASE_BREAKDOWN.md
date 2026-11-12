@@ -26,33 +26,35 @@
 
 ---
 
-### [ ] Phase 3: Typed Agent & Domain Contracts
+### [x] Phase 3: Typed Agent & Domain Contracts (COMPLETED)
 - **Scope**:
-  - Complete Pydantic v2 schemas across all agents in `packages/contracts`:
+  - Complete Pydantic v2 schemas across all 9 agents in `packages/contracts`:
     - `CandidateProfile`, `WorkExperience`, `Education`, `SkillItem`, `ProfileEvidence`.
     - `JobListing`, `MatchExplanation`, `ScoreBreakdown`.
     - `ApplicationPackage`, `ApplicationReadiness`, `ApplicationResult`.
-    - `EmailDraft`, `InterviewPlan`.
-  - Contract validation suite enforcing schema versioning, prompt versions, model identifiers, and evidence grounding.
+    - `EmailDraft`, `InterviewPlan`, `QuestionSet`, `PracticeFeedback`.
+    - `PolicyReviewResult`, `PolicyViolation`, `PrivacyRedaction`.
+    - `AgentExecutionMetadata`, `AgentRunRecord`, `ToolCallRecord`, `TokenUsage`.
+  - Contract validation suite enforcing schema versioning, prompt versions, model identifiers, and evidence grounding (13 tests passing).
 
 ---
 
-### [ ] Phase 4: LangGraph Workflow Skeleton & Checkpointing
+### [x] Phase 4: Resume Multi-Format Extraction, Grounding & DB Persistence (COMPLETED)
 - **Scope**:
-  - LangGraph `StateGraph` definition for the Profile Onboarding and Verification lifecycle.
-  - Durable checkpoint persistence using PostgreSQL and fallback checkpointer.
-  - Non-bypassable human approval pause gate (`awaiting_profile_confirmation`).
-  - Resume-from-checkpoint execution without state loss or memory corruption.
+  - Multi-format resume text extraction supporting PDF (`pypdf` + `pdfplumber`), DOCX (XML extraction), and text.
+  - Deterministic Profile Analyst extractor running 100% locally on CPU without external daemon dependencies.
+  - Strict evidence grounding (`EvidenceReference` with verbatim `raw_snippet`) distinguishing verified facts from missing/inferred fields.
+  - Database persistence via `ProfileRepository` saving candidate profile and granular evidence records.
 
 ---
 
-### [ ] Phase 5: Backend API & Resume Extraction Pipeline
+### [x] Phase 5: Authoritative LangGraph Workflow StateGraph & Human Confirmation Gate (COMPLETED)
 - **Scope**:
-  - Resume file upload endpoint supporting PDF and plain text.
-  - Open-source PDF text extraction using `pypdf` / `pdfplumber`.
-  - Profile Analyst agent execution isolating verified resume facts from unconfirmed inferences.
-  - Missing field detection generating targeted candidate questions.
-  - REST endpoints for profile inspection, updating, and confirmation.
+  - Full LangGraph `StateGraph` compilation (`services/orchestrator/workflow.py`) with `MemorySaver` durable checkpointing.
+  - Explicit nodes for ingestion (`profile_ingest`), validation (`profile_validate`), pause gate (`awaiting_confirmation`), and post-approval confirmation (`profile_confirmed`).
+  - Non-bypassable human approval pause gate enforced via `interrupt_before=["awaiting_confirmation"]`.
+  - Safe resume-from-checkpoint mechanics with user-confirmed fields and updated audit trail.
+  - Comprehensive unit test coverage verifying pause, resume, and checkpoint retention.
 
 ---
 
@@ -63,4 +65,3 @@
   - Profile review card visibly separating verified facts from missing/inferred information.
   - Explicit confirmation control to approve facts and resume the workflow.
   - End-of-week demo validation: `Resume upload -> Profile review -> Profile confirmation`.
-

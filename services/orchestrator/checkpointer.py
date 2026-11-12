@@ -27,8 +27,8 @@ class MemoryCheckpointer(BaseCheckpointer):
         self._checkpoints[workflow_id] = {
             "workflow_id": workflow_id,
             "stage": stage,
-            "state": state,
-            "saved_at": datetime.now(timezone.utc).isoformat()
+            "state": dict(state),
+            "saved_at": datetime.now(timezone.utc).isoformat(),
         }
 
     def load_checkpoint(self, workflow_id: str) -> Optional[Dict[str, Any]]:
@@ -41,6 +41,4 @@ class MemoryCheckpointer(BaseCheckpointer):
         self._checkpoints.clear()
 
 
-# Default singleton checkpointer for Phase 1
 default_checkpointer = MemoryCheckpointer()
-
