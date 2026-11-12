@@ -8,9 +8,10 @@ import {
   Shield,
   ArrowRight,
   Briefcase,
-  FileSearch,
   Sparkles,
   Lock,
+  FileSearch,
+  ExternalLink,
 } from "lucide-react";
 
 interface ProfileReviewCardProps {
@@ -64,7 +65,6 @@ export const ProfileReviewCard: React.FC<ProfileReviewCardProps> = ({
         setConfirmed(true);
         onConfirmed();
       } else {
-        // Fallback for isolated preview mode
         setConfirmed(true);
         onConfirmed();
       }
@@ -78,195 +78,195 @@ export const ProfileReviewCard: React.FC<ProfileReviewCardProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+    <div className="bg-app-card rounded-xl border border-border-default shadow-dark-sm p-6 space-y-6">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-slate-100 pb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 border-b border-border-subtle pb-4">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="text-xs uppercase font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full flex items-center space-x-1">
-              <Lock className="w-3 h-3 text-amber-600" />
+            <span className="text-[10px] uppercase font-bold text-accent-amber bg-accent-amber/10 border border-accent-amber/20 px-2 py-0.5 rounded-full flex items-center space-x-1">
+              <Lock className="w-3 h-3 text-accent-amber" />
               <span>Human Approval Gate</span>
             </span>
-            <span className="text-xs text-slate-400 font-mono">Thread: {workflowId}</span>
+            <span className="text-xs text-content-muted font-mono">Thread: {workflowId}</span>
           </div>
-          <h3 className="text-xl font-bold text-slate-900 mt-2">
-            Step 2: Profile Review & Evidence Validation
+          <h3 className="text-lg font-bold text-content-primary mt-2">
+            Step 2: Profile Review & Evidence Grounding
           </h3>
-          <p className="text-xs text-slate-500 mt-0.5">
-            The LangGraph orchestrator is paused. Review verified facts below. Unconfirmed inferences are never treated as facts.
+          <p className="text-xs text-content-secondary mt-0.5">
+            LangGraph orchestrator state is paused. Review verified facts below. Unconfirmed inferences are never treated as facts.
           </p>
         </div>
 
         {confirmed ? (
-          <span className="flex items-center text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 shadow-sm">
-            <CheckCircle className="w-4 h-4 mr-1.5 text-emerald-600" />
+          <span className="flex items-center text-xs font-semibold text-accent-emerald bg-accent-emerald/10 px-3 py-1.5 rounded-full border border-accent-emerald/25 shadow-dark-sm">
+            <CheckCircle className="w-4 h-4 mr-1.5 text-accent-emerald" />
             Verified & Confirmed
           </span>
         ) : (
-          <span className="flex items-center text-xs font-medium text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">
-            <AlertTriangle className="w-4 h-4 mr-1.5 text-amber-600" />
-            Action Required
+          <span className="flex items-center text-xs font-medium text-accent-amber bg-accent-amber/10 px-3 py-1.5 rounded-full border border-accent-amber/25">
+            <AlertTriangle className="w-4 h-4 mr-1.5 text-accent-amber" />
+            Verification Required
           </span>
         )}
       </div>
 
-      {/* Tabs for Clear Separation of Facts vs Inferences vs Missing */}
-      <div className="flex border-b border-slate-200 text-xs font-semibold">
+      {/* Tabs for Clear Separation */}
+      <div className="flex border-b border-border-subtle text-xs font-semibold">
         <button
           onClick={() => setActiveTab("facts")}
-          className={`pb-2.5 px-4 flex items-center space-x-1.5 border-b-2 transition ${
+          className={`pb-2.5 px-4 flex items-center space-x-2 border-b-2 transition ${
             activeTab === "facts"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-slate-500 hover:text-slate-800"
+              ? "border-accent-primary text-accent-secondary bg-accent-primary/5 rounded-t-lg"
+              : "border-transparent text-content-secondary hover:text-content-primary"
           }`}
         >
-          <Shield className="w-3.5 h-3.5 text-blue-600" />
+          <Shield className="w-3.5 h-3.5 text-accent-primary" />
           <span>Verified Facts ({profile.skills?.length || 0})</span>
         </button>
 
         <button
           onClick={() => setActiveTab("inferences")}
-          className={`pb-2.5 px-4 flex items-center space-x-1.5 border-b-2 transition ${
+          className={`pb-2.5 px-4 flex items-center space-x-2 border-b-2 transition ${
             activeTab === "inferences"
-              ? "border-amber-500 text-amber-700"
-              : "border-transparent text-slate-500 hover:text-slate-800"
+              ? "border-accent-amber text-accent-amber bg-accent-amber/5 rounded-t-lg"
+              : "border-transparent text-content-secondary hover:text-content-primary"
           }`}
         >
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <Sparkles className="w-3.5 h-3.5 text-accent-amber" />
           <span>Inferred / Deduced ({profile.inferred_fields?.length || 0})</span>
         </button>
 
         <button
           onClick={() => setActiveTab("missing")}
-          className={`pb-2.5 px-4 flex items-center space-x-1.5 border-b-2 transition ${
+          className={`pb-2.5 px-4 flex items-center space-x-2 border-b-2 transition ${
             activeTab === "missing"
-              ? "border-rose-500 text-rose-600"
-              : "border-transparent text-slate-500 hover:text-slate-800"
+              ? "border-accent-rose text-accent-rose bg-accent-rose/5 rounded-t-lg"
+              : "border-transparent text-content-secondary hover:text-content-primary"
           }`}
         >
-          <HelpCircle className="w-3.5 h-3.5 text-rose-500" />
-          <span>Missing Information ({profile.missing_fields?.length || 0})</span>
+          <HelpCircle className="w-3.5 h-3.5 text-accent-rose" />
+          <span>Missing Fields ({profile.missing_fields?.length || 0})</span>
         </button>
       </div>
 
-      {/* Editable Core Attributes */}
+      {/* Editable Core Candidate Attributes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <span className="text-[11px] uppercase font-bold text-slate-500">Candidate Name</span>
+        <div className="p-3 bg-app-cardSecondary rounded-xl border border-border-subtle">
+          <span className="text-[10px] uppercase font-bold text-content-muted">Candidate Name</span>
           <input
             type="text"
             value={profile.full_name || ""}
             onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded px-2.5 py-1.5 mt-1 focus:ring-1 focus:ring-blue-500"
+            className="w-full text-xs font-semibold text-content-primary bg-app-card border border-border-default rounded-lg px-2.5 py-1.5 mt-1 focus:border-border-active focus:ring-1 focus:ring-accent-primary focus:outline-none"
           />
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <span className="text-[11px] uppercase font-bold text-slate-500">Email Address</span>
+        <div className="p-3 bg-app-cardSecondary rounded-xl border border-border-subtle">
+          <span className="text-[10px] uppercase font-bold text-content-muted">Email Address</span>
           <input
             type="text"
             value={profile.email || ""}
             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded px-2.5 py-1.5 mt-1 focus:ring-1 focus:ring-blue-500"
+            className="w-full text-xs font-semibold text-content-primary bg-app-card border border-border-default rounded-lg px-2.5 py-1.5 mt-1 focus:border-border-active focus:ring-1 focus:ring-accent-primary focus:outline-none"
           />
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <span className="text-[11px] uppercase font-bold text-slate-500">Location</span>
+        <div className="p-3 bg-app-cardSecondary rounded-xl border border-border-subtle">
+          <span className="text-[10px] uppercase font-bold text-content-muted">Primary Location</span>
           <input
             type="text"
             value={profile.primary_location || ""}
             onChange={(e) => setProfile({ ...profile, primary_location: e.target.value })}
-            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded px-2.5 py-1.5 mt-1 focus:ring-1 focus:ring-blue-500"
+            className="w-full text-xs font-semibold text-content-primary bg-app-card border border-border-default rounded-lg px-2.5 py-1.5 mt-1 focus:border-border-active focus:ring-1 focus:ring-accent-primary focus:outline-none"
           />
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <span className="text-[11px] uppercase font-bold text-slate-500">Years Experience</span>
+        <div className="p-3 bg-app-cardSecondary rounded-xl border border-border-subtle">
+          <span className="text-[10px] uppercase font-bold text-content-muted">Years Experience</span>
           <input
             type="number"
             step="0.5"
             value={profile.total_years_experience || 0}
             onChange={(e) => setProfile({ ...profile, total_years_experience: parseFloat(e.target.value) || 0 })}
-            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded px-2.5 py-1.5 mt-1 focus:ring-1 focus:ring-blue-500"
+            className="w-full text-xs font-semibold text-content-primary bg-app-card border border-border-default rounded-lg px-2.5 py-1.5 mt-1 focus:border-border-active focus:ring-1 focus:ring-accent-primary focus:outline-none"
           />
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <span className="text-[11px] uppercase font-bold text-slate-500">Work Authorization</span>
+        <div className="p-3 bg-app-cardSecondary rounded-xl border border-border-subtle">
+          <span className="text-[10px] uppercase font-bold text-content-muted">Work Authorization</span>
           <input
             type="text"
             value={profile.work_authorization || "Authorized / Citizen"}
             onChange={(e) => setProfile({ ...profile, work_authorization: e.target.value })}
-            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded px-2.5 py-1.5 mt-1 focus:ring-1 focus:ring-blue-500"
+            className="w-full text-xs font-semibold text-content-primary bg-app-card border border-border-default rounded-lg px-2.5 py-1.5 mt-1 focus:border-border-active focus:ring-1 focus:ring-accent-primary focus:outline-none"
           />
         </div>
-        <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-          <span className="text-[11px] uppercase font-bold text-slate-500">Notice Period (Days)</span>
+        <div className="p-3 bg-app-cardSecondary rounded-xl border border-border-subtle">
+          <span className="text-[10px] uppercase font-bold text-content-muted">Notice Period (Days)</span>
           <input
             type="number"
             value={profile.notice_period_days || 0}
             onChange={(e) => setProfile({ ...profile, notice_period_days: parseInt(e.target.value) || 0 })}
-            className="w-full text-xs font-semibold text-slate-900 bg-white border border-slate-200 rounded px-2.5 py-1.5 mt-1 focus:ring-1 focus:ring-blue-500"
+            className="w-full text-xs font-semibold text-content-primary bg-app-card border border-border-default rounded-lg px-2.5 py-1.5 mt-1 focus:border-border-active focus:ring-1 focus:ring-accent-primary focus:outline-none"
           />
         </div>
       </div>
 
-      {/* Tab 1: Verified Facts with Grounded Evidence */}
+      {/* Tab 1: Verified Facts with Grounded Citations */}
       {activeTab === "facts" && (
         <div className="space-y-4">
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center">
-              <Shield className="w-3.5 h-3.5 text-blue-600 mr-1.5" />
-              Verified Skills & Text Evidence Citations
+            <h4 className="text-xs font-bold uppercase tracking-wider text-content-secondary mb-2.5 flex items-center">
+              <Shield className="w-3.5 h-3.5 text-accent-primary mr-1.5" />
+              Verified Skills & Verbatim Citations
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               {profile.skills && profile.skills.length > 0 ? (
                 profile.skills.map((skill: any, idx: number) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-lg border border-blue-100 bg-blue-50/40 text-xs flex flex-col justify-between"
+                    className="p-3 rounded-xl border border-border-default bg-app-cardSecondary/80 text-xs flex flex-col justify-between space-y-2 hover:border-accent-primary/40 transition"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-blue-900 flex items-center">
-                        <CheckCircle className="w-3.5 h-3.5 text-blue-600 mr-1" />
+                      <span className="font-bold text-content-primary flex items-center">
+                        <CheckCircle className="w-3.5 h-3.5 text-accent-emerald mr-1.5" />
                         {skill.name}
                       </span>
                       {skill.evidence?.confidence_score && (
-                        <span className="text-[10px] text-blue-600 bg-blue-100 px-1.5 py-0.5 rounded">
-                          {Math.round(skill.evidence.confidence_score * 100)}% Match
+                        <span className="text-[10px] text-accent-secondary bg-accent-primary/10 border border-accent-primary/20 px-1.5 py-0.5 rounded font-mono">
+                          {Math.round(skill.evidence.confidence_score * 100)}% Grounded
                         </span>
                       )}
                     </div>
                     {skill.evidence?.raw_snippet ? (
-                      <p className="mt-1 text-[11px] text-slate-600 font-mono bg-white/80 p-1.5 rounded border border-blue-100/50">
+                      <p className="text-[11px] text-content-secondary font-mono bg-app-card p-2 rounded-lg border border-border-subtle leading-relaxed">
                         &ldquo;{skill.evidence.raw_snippet}&rdquo;
                       </p>
                     ) : (
-                      <p className="text-[11px] text-slate-400 mt-1 italic">Verified from profile input</p>
+                      <p className="text-[11px] text-content-muted italic">Verified from profile input</p>
                     )}
                   </div>
                 ))
               ) : (
-                <span className="text-xs text-slate-400 italic">No skills extracted yet.</span>
+                <span className="text-xs text-content-muted italic">No skills extracted yet.</span>
               )}
             </div>
           </div>
 
-          {/* Work Experiences */}
+          {/* Work Experience History */}
           {profile.work_experiences && profile.work_experiences.length > 0 && (
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2 flex items-center">
-                <Briefcase className="w-3.5 h-3.5 text-slate-600 mr-1.5" />
+            <div className="pt-2">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-content-secondary mb-2 flex items-center">
+                <Briefcase className="w-3.5 h-3.5 text-content-secondary mr-1.5" />
                 Work Experience History
               </h4>
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {profile.work_experiences.map((exp: any, idx: number) => (
-                  <div key={idx} className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs">
-                    <div className="flex justify-between items-center font-bold text-slate-900">
+                  <div key={idx} className="p-3.5 bg-app-cardSecondary border border-border-default rounded-xl text-xs space-y-1.5">
+                    <div className="flex justify-between items-center font-bold text-content-primary">
                       <span>{exp.job_title} · {exp.company}</span>
-                      <span className="text-slate-500 font-normal">
+                      <span className="text-content-muted font-normal text-[11px]">
                         {exp.start_date || "Past"} – {exp.is_current ? "Present" : exp.end_date || "Past"}
                       </span>
                     </div>
                     {exp.highlights && exp.highlights.length > 0 && (
-                      <ul className="mt-2 list-disc list-inside text-slate-600 text-[11px] space-y-0.5">
+                      <ul className="list-disc list-inside text-content-secondary text-[11px] space-y-1 pl-1">
                         {exp.highlights.map((h: string, hIdx: number) => (
                           <li key={hIdx}>{h}</li>
                         ))}
@@ -282,28 +282,28 @@ export const ProfileReviewCard: React.FC<ProfileReviewCardProps> = ({
 
       {/* Tab 2: Inferred Fields */}
       {activeTab === "inferences" && (
-        <div className="border border-amber-200 bg-amber-50/50 rounded-xl p-4 space-y-3">
-          <div className="flex items-center space-x-2 text-amber-900">
-            <Sparkles className="w-4 h-4 text-amber-600" />
-            <h4 className="text-xs font-bold uppercase">
-              Model Inferences (Held Unverified Until Confirmed)
+        <div className="border border-accent-amber/30 bg-accent-amber/5 rounded-xl p-4 space-y-3">
+          <div className="flex items-center space-x-2 text-accent-amber">
+            <Sparkles className="w-4 h-4 text-accent-amber" />
+            <h4 className="text-xs font-bold uppercase tracking-wide">
+              Model Inferences (Quarantined Until Confirmed)
             </h4>
           </div>
-          <p className="text-xs text-amber-800">
+          <p className="text-xs text-content-secondary">
             These fields were inferred or estimated by algorithms. AgentFlow strictly isolates them until you review and verify them.
           </p>
           <div className="space-y-2 mt-2">
             {profile.inferred_fields && profile.inferred_fields.length > 0 ? (
               profile.inferred_fields.map((inf: string, idx: number) => (
-                <div key={idx} className="bg-white p-3 rounded-lg border border-amber-100 text-xs flex items-center justify-between">
-                  <span className="text-slate-700">{inf}</span>
-                  <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                <div key={idx} className="bg-app-cardSecondary p-3 rounded-lg border border-border-default text-xs flex items-center justify-between">
+                  <span className="text-content-primary">{inf}</span>
+                  <span className="text-[10px] font-semibold text-accent-amber bg-accent-amber/10 border border-accent-amber/20 px-2 py-0.5 rounded">
                     Requires Confirmation
                   </span>
                 </div>
               ))
             ) : (
-              <p className="text-xs text-slate-400 italic">No unconfirmed inferences detected.</p>
+              <p className="text-xs text-content-muted italic">No unconfirmed inferences detected.</p>
             )}
           </div>
         </div>
@@ -311,28 +311,28 @@ export const ProfileReviewCard: React.FC<ProfileReviewCardProps> = ({
 
       {/* Tab 3: Missing Fields Questionnaire */}
       {activeTab === "missing" && (
-        <div className="border border-rose-200 bg-rose-50/40 rounded-xl p-4 space-y-3">
-          <div className="flex items-center space-x-2 text-rose-900">
-            <HelpCircle className="w-4 h-4 text-rose-600" />
-            <h4 className="text-xs font-bold uppercase">
+        <div className="border border-accent-rose/30 bg-accent-rose/5 rounded-xl p-4 space-y-3">
+          <div className="flex items-center space-x-2 text-accent-rose">
+            <HelpCircle className="w-4 h-4 text-accent-rose" />
+            <h4 className="text-xs font-bold uppercase tracking-wide">
               Targeted Follow-Up Questionnaire
             </h4>
           </div>
-          <p className="text-xs text-rose-800">
+          <p className="text-xs text-content-secondary">
             Answering these fields improves downstream job matching accuracy.
           </p>
           <div className="space-y-3 mt-2">
             {profile.missing_fields && profile.missing_fields.length > 0 ? (
               profile.missing_fields.map((mf: any, idx: number) => (
-                <div key={idx} className="bg-white p-3.5 rounded-lg border border-rose-100 text-xs space-y-1.5 shadow-sm">
+                <div key={idx} className="bg-app-cardSecondary p-3.5 rounded-xl border border-border-default text-xs space-y-2 shadow-dark-sm">
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-slate-900">{mf.field_name}</span>
-                    <span className="text-[10px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded font-semibold">
+                    <span className="font-bold text-content-primary">{mf.field_name}</span>
+                    <span className="text-[10px] text-accent-rose bg-accent-rose/10 border border-accent-rose/20 px-2 py-0.5 rounded font-semibold">
                       Missing from resume
                     </span>
                   </div>
-                  <p className="text-slate-600 text-[11px]">{mf.description}</p>
-                  <label className="block text-blue-700 font-semibold text-[11px] mt-1">
+                  <p className="text-content-secondary text-[11px]">{mf.description}</p>
+                  <label className="block text-accent-secondary font-semibold text-[11px]">
                     {mf.suggested_question}
                   </label>
                   <input
@@ -340,24 +340,24 @@ export const ProfileReviewCard: React.FC<ProfileReviewCardProps> = ({
                     value={answers[mf.field_name] || ""}
                     onChange={(e) => handleAnswerChange(mf.field_name, e.target.value)}
                     placeholder="Provide answer here..."
-                    className="w-full text-xs p-2 border border-slate-200 rounded focus:ring-1 focus:ring-blue-500"
+                    className="w-full text-xs p-2.5 bg-app-card border border-border-default rounded-lg focus:border-border-active focus:ring-1 focus:ring-accent-primary focus:outline-none text-content-primary placeholder:text-content-muted"
                   />
                 </div>
               ))
             ) : (
-              <p className="text-xs text-slate-400 italic">All key fields are present.</p>
+              <p className="text-xs text-content-muted italic">All required fields are present.</p>
             )}
           </div>
         </div>
       )}
 
-      {/* Action / Human Approval Gate Button */}
+      {/* Human Approval Action */}
       {!confirmed ? (
-        <div className="pt-2 border-t border-slate-100">
+        <div className="pt-2 border-t border-border-subtle">
           <button
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold flex items-center justify-center space-x-2 shadow-sm transition disabled:opacity-50"
+            className="w-full py-3 px-4 bg-accent-emerald hover:bg-emerald-600 active:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center justify-center space-x-2 shadow-dark-md transition disabled:opacity-50"
           >
             <span>
               {isSubmitting
@@ -366,13 +366,13 @@ export const ProfileReviewCard: React.FC<ProfileReviewCardProps> = ({
             </span>
             <ArrowRight className="w-4 h-4" />
           </button>
-          <p className="text-center text-xs text-slate-400 mt-2">
-            Clicking confirm commits verified facts to PostgreSQL, updates thread state, and unlocks the next workflow stage.
+          <p className="text-center text-[11px] text-content-muted mt-2">
+            Clicking confirm commits verified facts to PostgreSQL, updates thread state, and unlocks downstream agents.
           </p>
         </div>
       ) : (
-        <div className="p-4 bg-emerald-50 text-emerald-800 rounded-lg text-center text-sm font-semibold border border-emerald-200 flex items-center justify-center space-x-2">
-          <CheckCircle className="w-5 h-5 text-emerald-600" />
+        <div className="p-4 bg-accent-emerald/10 text-accent-emerald rounded-xl text-center text-xs font-semibold border border-accent-emerald/25 flex items-center justify-center space-x-2">
+          <CheckCircle className="w-4 h-4 text-accent-emerald" />
           <span>Profile confirmed! Ready for Week 2 Job Ingestion, Matching & Recommendations.</span>
         </div>
       )}
