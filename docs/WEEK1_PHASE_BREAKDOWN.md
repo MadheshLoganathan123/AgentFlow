@@ -58,10 +58,13 @@
 
 ---
 
-### [ ] Phase 6: Web Dashboard & Profile Onboarding UI
+### [x] Phase 6: Web Dashboard & Profile Onboarding UI (COMPLETED)
 - **Scope**:
   - Next.js 14 App Router dashboard with responsive Tailwind CSS layout.
-  - Resume upload component with drag-and-drop file selector and text fallback.
-  - Profile review card visibly separating verified facts from missing/inferred information.
-  - Explicit confirmation control to approve facts and resume the workflow.
-  - End-of-week demo validation: `Resume upload -> Profile review -> Profile confirmation`.
+  - Multi-format resume uploader (`ResumeUploader.tsx`) with drag-and-drop selector (.pdf, .docx, .txt) and direct text paste.
+  - Comprehensive profile review component (`ProfileReviewCard.tsx`) with dedicated tabbed separation for:
+    - Verified facts with grounded evidence snippets and confidence match badges.
+    - Model-inferred or deduced fields strictly quarantined until user approval.
+    - Targeted missing fields questionnaire with interactive input prompts.
+  - Human approval gate confirmation control calling backend REST endpoint to commit facts and resume the LangGraph workflow.
+  - End-of-week demo validation verified: `Resume upload -> Profile review -> Profile confirmation`.
