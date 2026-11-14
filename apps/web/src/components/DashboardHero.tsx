@@ -67,3 +67,4 @@ export const DashboardHero: React.FC = () => {
     </div>
   );
 };
+

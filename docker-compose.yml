@@ -39,8 +39,10 @@ services:
       - DATABASE_URL_SYNC=postgresql+psycopg2://${POSTGRES_USER:-agentflow}:${POSTGRES_PASSWORD:-agentflow_dev_password}@postgres:5432/${POSTGRES_DB:-agentflow}
       - API_HOST=0.0.0.0
       - API_PORT=8000
-      - LLM_PROVIDER=deterministic
-      - EMBEDDING_PROVIDER=tfidf
+      - LLM_PROVIDER=${LLM_PROVIDER:-huggingface}
+      - HF_TOKEN=${HF_TOKEN:-}
+      - HF_MODEL_NAME=${HF_MODEL_NAME:-Qwen/Qwen2.5-1.5B-Instruct}
+      - EMBEDDING_PROVIDER=${EMBEDDING_PROVIDER:-tfidf}
     volumes:
       - ./services/api:/app/services/api
       - ./services/orchestrator:/app/services/orchestrator

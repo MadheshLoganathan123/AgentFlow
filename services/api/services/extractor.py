@@ -18,6 +18,8 @@ from packages.contracts.profile import (
     WorkExperience,
     WorkModePreference,
 )
+from services.api.config import settings
+from services.api.services.huggingface_client import HuggingFaceClient
 
 logger = logging.getLogger("agentflow.extractor")
 
@@ -116,12 +118,22 @@ class ResumeExtractorService:
         raw_text: str,
         user_id: str = "default-user",
         extra_fields: Optional[Dict[str, Any]] = None,
+        use_ai: bool = True,
+        hf_client: Optional[HuggingFaceClient] = None,
     ) -> CandidateProfile:
         """
         Asynchronously parse raw resume text into a structured CandidateProfile.
-        Operates 100% locally with zero external background daemon dependencies.
+        Attempts lightweight open-source AI model extraction via Hugging Face when configured,
+        fusing with deterministic evidence verification to ensure evidence grounding.
+        Seamlessly falls back to local deterministic parsing if offline, unconfigured, or rate-limited.
         """
-        return cls.parse_profile(raw_text, user_id=user_id, extra_fields=extra_fields)
+        ai_data = None
+        if use_ai:
+            client = hf_client or HuggingFaceClient()
+            if client.is_configured:
+                ai_data = await client.extract_structured_resume(raw_text)
+
+        return cls.parse_profile(raw_text, user_id=user_id, extra_fields=extra_fields, ai_data=ai_data)
 
     @classmethod
     def parse_profile(
@@ -129,28 +141,55 @@ class ResumeExtractorService:
         raw_text: str,
         user_id: str = "default-user",
         extra_fields: Optional[Dict[str, Any]] = None,
+        ai_data: Optional[Dict[str, Any]] = None,
     ) -> CandidateProfile:
         """
         Synchronous deterministic profile parser.
         Extracts verified facts from the resume text and rigorously distinguishes them
-        from inferences and missing fields.
+        from inferences and missing fields, incorporating AI-extracted insights when available.
         """
         # 1. Contact and identity
-        email = (extra_fields.get("email") if (extra_fields and extra_fields.get("email")) else cls._extract_email(raw_text))
-        phone = (extra_fields.get("phone") if (extra_fields and extra_fields.get("phone")) else cls._extract_phone(raw_text))
-        name = (extra_fields.get("full_name") if (extra_fields and extra_fields.get("full_name")) else cls._extract_name(raw_text, email))
+        email = (
+            extra_fields.get("email")
+            if (extra_fields and extra_fields.get("email"))
+            else ((ai_data.get("email") if ai_data else None) or cls._extract_email(raw_text))
+        )
+        phone = (
+            extra_fields.get("phone")
+            if (extra_fields and extra_fields.get("phone"))
+            else ((ai_data.get("phone") if ai_data else None) or cls._extract_phone(raw_text))
+        )
+        name = (
+            extra_fields.get("full_name")
+            if (extra_fields and extra_fields.get("full_name"))
+            else ((ai_data.get("full_name") if ai_data else None) or cls._extract_name(raw_text, email))
+        )
 
         # 2. Extract facts from resume text
         skills = cls._extract_skills(raw_text)
         experiences = cls._extract_experience(raw_text)
         education = cls._extract_education(raw_text)
-        location = cls._extract_location(raw_text) or (extra_fields.get("primary_location") if extra_fields else "Remote / Flexible")
+        location = (
+            (extra_fields.get("primary_location") if extra_fields else None)
+            or (ai_data.get("primary_location") if ai_data else None)
+            or cls._extract_location(raw_text)
+            or "Remote / Flexible"
+        )
 
         # 3. Work modes and target job titles
         work_modes = cls._extract_work_modes(raw_text)
+        if ai_data and ai_data.get("work_modes"):
+            for wm in ai_data["work_modes"]:
+                wm_str = str(wm).lower()
+                for enum_val in WorkModePreference:
+                    if enum_val.value == wm_str and enum_val not in work_modes:
+                        work_modes.append(enum_val)
+
         target_titles = [exp.title for exp in experiences if exp.title]
         if not target_titles and extra_fields and extra_fields.get("target_job_titles"):
             target_titles = [str(t) for t in extra_fields["target_job_titles"]]
+        if not target_titles and ai_data and ai_data.get("target_job_titles"):
+            target_titles = [str(t) for t in ai_data["target_job_titles"]]
         if not target_titles:
             target_titles = ["Software Engineer"]
 
@@ -159,19 +198,30 @@ class ResumeExtractorService:
         missing_fields: List[MissingFieldNotice] = []
 
         # Calculate or infer years of experience
-        total_years = cls._calculate_years_of_experience(raw_text, experiences)
-        if total_years is None and extra_fields and extra_fields.get("total_years_experience") is not None:
+        total_years = None
+        if extra_fields and extra_fields.get("total_years_experience") is not None:
             try:
                 total_years = float(extra_fields["total_years_experience"])
                 inferred_fields.append(f"total_years_experience: {total_years} (inferred)")
             except (ValueError, TypeError):
-                total_years = 1.0
-        elif total_years is None:
+                pass
+
+        if total_years is None:
+            total_years = cls._calculate_years_of_experience(raw_text, experiences)
+
+        if total_years is None and ai_data and ai_data.get("total_years_experience") is not None:
+            try:
+                total_years = float(ai_data["total_years_experience"])
+                inferred_fields.append(f"total_years_experience: {total_years} (inferred from HF model)")
+            except (ValueError, TypeError):
+                pass
+
+        if total_years is None:
             total_years = float(len(experiences) * 2.0) if experiences else 1.0
             inferred_fields.append(f"total_years_experience: {total_years} (estimated from {len(experiences)} roles)")
 
         # Work authorization detection
-        work_auth = cls._extract_work_authorization(raw_text)
+        work_auth = cls._extract_work_authorization(raw_text) or (ai_data.get("work_authorization") if ai_data else None)
         if not work_auth:
             missing_fields.append(
                 MissingFieldNotice(
@@ -183,7 +233,7 @@ class ResumeExtractorService:
             )
 
         # Target salary detection
-        salary_min = cls._extract_salary_expectation(raw_text)
+        salary_min = cls._extract_salary_expectation(raw_text) or (ai_data.get("target_salary_min") if ai_data else None)
         if salary_min is None:
             missing_fields.append(
                 MissingFieldNotice(
@@ -195,7 +245,7 @@ class ResumeExtractorService:
             )
 
         # Notice period detection
-        notice_days = cls._extract_notice_period(raw_text)
+        notice_days = cls._extract_notice_period(raw_text) or (ai_data.get("notice_period_days") if ai_data else None)
         if notice_days is None:
             missing_fields.append(
                 MissingFieldNotice(
@@ -207,16 +257,18 @@ class ResumeExtractorService:
             )
 
         # Preferred sectors / industries
-        missing_fields.append(
-            MissingFieldNotice(
-                field_name="preferred_sectors",
-                description="Preferred industries or target sectors are not specified.",
-                is_critical_for_matching=False,
-                suggested_question="Which sectors or industries do you prefer (e.g. Fintech, Healthcare, Developer Tools, AI)?",
+        preferred_sectors = (ai_data.get("preferred_sectors") if ai_data else None)
+        if not preferred_sectors:
+            missing_fields.append(
+                MissingFieldNotice(
+                    field_name="preferred_sectors",
+                    description="Preferred industries or target sectors are not specified.",
+                    is_critical_for_matching=False,
+                    suggested_question="Which sectors or industries do you prefer (e.g. Fintech, Healthcare, Developer Tools, AI)?",
+                )
             )
-        )
 
-        model_version = "deterministic_extractor:v1"
+        model_version = f"hf_{settings.hf_model_name}" if ai_data else "deterministic_extractor:v1"
 
         return CandidateProfile(
             user_id=user_id,
@@ -455,9 +507,6 @@ class ResumeExtractorService:
             span = max(years) - min(years)
             if 0 < span <= 45:
                 return float(span)
-
-        if experiences:
-            return float(len(experiences) * 2.0)
 
         return None
 

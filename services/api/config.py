@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -22,10 +22,16 @@ class Settings(BaseSettings):
     max_upload_size_mb: int = 15
     local_storage_path: str = "./uploads"
 
-    # Open Source Lightweight Provider Configuration (CPU-Friendly Deterministic Engine)
-    llm_provider: str = "deterministic"
+    # Open Source Lightweight Provider Configuration (Hugging Face / CPU-Friendly Deterministic Engine)
+    llm_provider: str = "huggingface"
     llm_model_name: str = "open_source_extractor:v1"
     embedding_model_name: str = "tfidf_local"
+    embedding_provider: str = "tfidf"
+
+    # Hugging Face Configuration
+    hf_token: Optional[str] = None
+    hf_model_name: str = "Qwen/Qwen2.5-1.5B-Instruct"
+    hf_embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 settings = Settings()

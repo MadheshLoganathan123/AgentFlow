@@ -246,3 +246,4 @@ export const ApplicationPackagesView: React.FC = () => {
     </div>
   );
 };
+
