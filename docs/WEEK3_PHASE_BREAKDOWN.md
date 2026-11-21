@@ -1,0 +1,64 @@
+# Week 3 — Tailored Documents, Email Drafts, and Interview Research
+## Detailed 6-Phase Implementation Breakdown
+
+**Overall Goal of Week 3**: A shortlisted role produces an application package and preparation workspace. Grounded, explainable, zero-hallucination document tailoring, non-bypassable human review gates, structured email drafts, allowlisted web research, and interactive interview preparation.
+
+---
+
+### [ ] Phase 1: Resume Tailoring & Visible Diff Analysis Engine
+- **Goal**: Generate targeted resume variants tailored to shortlisted job listings strictly grounded in confirmed profile facts, with line-by-line diff summaries.
+- **Scope**:
+  - `TailoredResume` contract with section-by-section diffs, emphasized skills, omitted irrelevant sections, and evidence citations.
+  - Zero-fabrication enforcement: every tailored bullet must link to a confirmed profile work experience, project, or skill.
+  - Heuristic + lightweight LLM tailoring service with deterministic offline fallback.
+  - Visible side-by-side or structured comparison between base resume and tailored variant.
+
+---
+
+### [ ] Phase 2: Fact-Grounded Cover Letter & Application Question Drafter
+- **Goal**: Produce targeted cover letters and answer common application questions with explicit unsupported-claim warnings.
+- **Scope**:
+  - `CoverLetter` and `ApplicationQuestionAnswer` schemas with paragraph-level provenance linking.
+  - Policy & Quality Reviewer check: scans generated text for unconfirmed employers, dates, degrees, metrics, or achievements.
+  - Missing-evidence flags requiring user input when an application question cannot be answered from profile data alone.
+
+---
+
+### [ ] Phase 3: Role-Specific Email Generation System (Recruiter, Referral, Follow-Up, Thank-You)
+- **Goal**: Generate role-specific, high-conversion email drafts for networking and application lifecycle management.
+- **Scope**:
+  - `EmailDraft` contract supporting 4 core templates:
+    1. Recruiter outreach (cold/warm)
+    2. Referral request (alumni/connection)
+    3. Application follow-up (post-submission)
+    4. Post-interview thank-you note
+  - Strict safety rule: **Never sends automatically**. All drafts are copyable/editable with recipient assumption checks.
+  - Configurable tone (formal, conversational, executive) and value-proposition emphasis.
+
+---
+
+### [ ] Phase 4: Allowlisted Web Research Tool & Source Citation Cards
+- **Goal**: Perform grounded research on prospective companies, role tech stacks, and team culture from reputable sources.
+- **Scope**:
+  - `WebResearchTool` with strict domain allowlist (e.g., official domains, SEC filings, GitHub, verified engineering blogs).
+  - Source capture retaining: `url`, `retrieval_date`, `page_title`, `source_excerpt`, and `content_hash`.
+  - UI Source Card component with citation badges, direct links, and "Remove/Report Source" controls.
+  - Distinction between company-specific intelligence vs. generic industry advice.
+
+---
+
+### [ ] Phase 5: Interview Preparation Plan & Text-Based Mock Interview Engine
+- **Goal**: Produce role- and seniority-tailored interview preparation guides and interactive mock interviews with scoring rubrics.
+- **Scope**:
+  - `InterviewPlan` generator covering technical, behavioral (STAR method), and domain-specific rounds.
+  - Interactive mock interview question evaluator with transparent scoring rubric (1–5 scale across Clarity, Relevance, Depth, Evidence).
+  - Feedback generator highlighting candidate strengths, identified gaps, and actionable suggestions (without false hiring guarantees).
+
+---
+
+### [ ] Phase 6: Application Package LangGraph Workflow & Web Dashboard Workspace
+- **Goal**: End-to-end orchestration uniting shortlisted roles into full application packages with human approval gate and dashboard view.
+- **Scope**:
+  - LangGraph `ApplicationPreparationWorkflow` with durable checkpoints and `interrupt_before=["awaiting_package_approval"]`.
+  - REST endpoints under `/api/v1/packages` for generating, reviewing, editing, and approving packages.
+  - Integration with `apps/web/src/components/ApplicationPackagesView.tsx`: interactive workspace for resume diffs, cover letter review, email templates, research cards, and mock interview practice.

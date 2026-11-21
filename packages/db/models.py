@@ -152,6 +152,8 @@ class JobListingModel(Base, TimestampMixin):
     retrieved_at = Column(DateTime(timezone=True), default=utc_now, nullable=False)
     posted_at = Column(DateTime(timezone=True), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
+    duplicate_of_id = Column(String(36), nullable=True)
+    alternate_sources = Column(JSON, default=list, nullable=False)
 
     source = relationship("JobSourceModel", back_populates="listings")
     matches = relationship("JobMatchModel", back_populates="job", cascade="all, delete-orphan")

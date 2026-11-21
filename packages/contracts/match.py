@@ -19,6 +19,7 @@ class ScoreBreakdown(BaseModel):
     salary_alignment_score: Optional[float] = Field(None, ge=0.0, le=100.0)
     work_authorization_score: float = Field(..., ge=0.0, le=100.0)
     recency_score: float = Field(..., ge=0.0, le=100.0)
+    industry_preference_score: Optional[float] = Field(None, ge=0.0, le=100.0)
     composite_score: float = Field(..., ge=0.0, le=100.0)
 
 

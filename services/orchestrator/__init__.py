@@ -3,6 +3,7 @@ from services.orchestrator.checkpointer import (
     MemoryCheckpointer,
     default_checkpointer,
 )
+from services.orchestrator.job_discovery_workflow import JobDiscoveryAndMatchingWorkflow
 from services.orchestrator.state import AgentFlowWorkflowState
 from services.orchestrator.workflow import ProfileOnboardingWorkflow
 
@@ -12,5 +13,6 @@ __all__ = [
     "MemoryCheckpointer",
     "default_checkpointer",
     "ProfileOnboardingWorkflow",
+    "JobDiscoveryAndMatchingWorkflow",
 ]
 

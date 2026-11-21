@@ -24,7 +24,14 @@ from packages.contracts.interview import (
     ResearchSource,
     SourceCitation,
 )
-from packages.contracts.job import JobListing, JobSeniority, WorkMode
+from packages.contracts.job import (
+    JobListing,
+    JobSeniority,
+    JobSourceType,
+    NormalizationSummary,
+    RawJobPayload,
+    WorkMode,
+)
 from packages.contracts.match import MatchExplanation, RequirementMatch, ScoreBreakdown
 from packages.contracts.policy import (
     PolicyCheckType,
@@ -63,6 +70,9 @@ __all__ = [
     "WorkModePreference",
     "JobListing",
     "JobSeniority",
+    "JobSourceType",
+    "NormalizationSummary",
+    "RawJobPayload",
     "WorkMode",
     "MatchExplanation",
     "RequirementMatch",

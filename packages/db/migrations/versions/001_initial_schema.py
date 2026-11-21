@@ -146,6 +146,8 @@ def upgrade() -> None:
         sa.Column("retrieved_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("posted_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("is_active", sa.Boolean(), nullable=False, default=True),
+        sa.Column("duplicate_of_id", sa.String(length=36), nullable=True),
+        sa.Column("alternate_sources", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["source_id"], ["job_sources.id"], ondelete="SET NULL"),

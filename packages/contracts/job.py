@@ -1,10 +1,17 @@
 from datetime import datetime
 from enum import Enum
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from packages.contracts.base import VersionedBaseModel, utc_now
+
+
+class JobSourceType(str, Enum):
+    API = "api"
+    FEED = "feed"
+    CRAWLER = "crawler"
+    MOCK = "mock"
 
 
 class JobSeniority(str, Enum):
@@ -24,6 +31,28 @@ class WorkMode(str, Enum):
     HYBRID = "hybrid"
     ONSITE = "onsite"
     UNKNOWN = "unknown"
+
+
+class RawJobPayload(BaseModel):
+    """
+    Standardized payload received directly from an ingestion source/adapter
+    prior to semantic normalization and deduplication.
+    """
+    source_name: str
+    source_job_id: str
+    source_url: str
+    title: str
+    organization: str
+    location_raw: Optional[str] = None
+    description_raw: str
+    description_html: Optional[str] = None
+    salary_raw: Optional[str] = None
+    work_mode_raw: Optional[str] = None
+    seniority_raw: Optional[str] = None
+    destination_url: str
+    retrieved_at: datetime = Field(default_factory=utc_now)
+    posted_at: Optional[datetime] = None
+    extra_metadata: Dict[str, Any] = Field(default_factory=dict)
 
 
 class JobListing(VersionedBaseModel):
@@ -54,4 +83,18 @@ class JobListing(VersionedBaseModel):
     retrieved_at: datetime = Field(default_factory=utc_now)
     posted_at: Optional[datetime] = None
     is_active: bool = True
+
+    # Cross-Source Deduplication & Linking
+    duplicate_of_id: Optional[str] = Field(None, description="Pointer to canonical listing ID if secondary duplicate")
+    alternate_sources: List[Dict[str, Any]] = Field(default_factory=list, description="Cross-source linked postings for the same role")
+    extra_metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
+class NormalizationSummary(BaseModel):
+    """Telemetry and outcome summary of job normalization and deduplication run."""
+    total_raw: int
+    total_unique: int
+    duplicates_detected: int
+    cross_source_links: int
+    processed_at: datetime = Field(default_factory=utc_now)
 

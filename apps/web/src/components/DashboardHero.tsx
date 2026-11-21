@@ -11,10 +11,6 @@ export const DashboardHero: React.FC = () => {
         <div className="space-y-2.5 max-w-3xl">
           {/* Metadata Badges */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-primary/10 text-accent-secondary border border-accent-primary/20">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-pulse" />
-              <span>Week 1 Completed</span>
-            </span>
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-app-cardSecondary text-content-secondary border border-border-subtle">
               6 Phases Integrated
             </span>

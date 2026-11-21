@@ -5,7 +5,6 @@ import { Navbar, TabKey } from "@/components/Navbar";
 import { DashboardHero } from "@/components/DashboardHero";
 import { ResumeUploader } from "@/components/ResumeUploader";
 import { ProfileReviewCard } from "@/components/ProfileReviewCard";
-import { RoadmapWidget } from "@/components/RoadmapWidget";
 import { JobMatchesView } from "@/components/JobMatchesView";
 import { ApplicationPackagesView } from "@/components/ApplicationPackagesView";
 import { AuditRunsView } from "@/components/AuditRunsView";
@@ -28,7 +27,7 @@ export default function Home() {
         {/* Tab 1: Profile & Onboarding Workspace */}
         {activeTab === "onboarding" && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Upload Component & Roadmap Widget */}
+            {/* Left Column: Upload Component */}
             <div className="lg:col-span-5 space-y-6">
               <ResumeUploader
                 onProfileExtracted={(data) => {
@@ -36,8 +35,6 @@ export default function Home() {
                   setIsCompleted(false);
                 }}
               />
-
-              <RoadmapWidget />
             </div>
 
             {/* Right Column: Intelligent Resume Analysis & Review Card */}
