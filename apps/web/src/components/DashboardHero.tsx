@@ -24,7 +24,7 @@ export const DashboardHero: React.FC = () => {
             AgentFlow — Multi-Agent Job Search Copilot
           </h2>
           <p className="text-xs sm:text-sm text-content-secondary leading-relaxed">
-            One workflow authority (<span className="text-accent-secondary font-medium">LangGraph StateGraph</span>) coordinates agent state, 
+            One workflow authority (<span className="text-accent-secondary font-medium">LangGraph StateGraph</span>) coordinates agent state,
             PostgreSQL + pgvector powers deterministic persistence, and non-bypassable human verification gates protect candidate decisions.
           </p>
         </div>

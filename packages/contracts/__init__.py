@@ -11,8 +11,12 @@ from packages.contracts.application import (
     ApplicationReadiness,
     ApplicationResult,
     ApplicationStatus,
+    DiffChangeType,
     ReadinessBlocker,
+    ResumeDiffAnalysis,
+    ResumeSectionDiff,
     TailoredDocument,
+    TailoredResume,
 )
 from packages.contracts.base import EvidenceReference, VersionedBaseModel, utc_now
 from packages.contracts.email import EmailDraft, EmailType
@@ -81,8 +85,12 @@ __all__ = [
     "ApplicationReadiness",
     "ApplicationResult",
     "ApplicationStatus",
+    "DiffChangeType",
     "ReadinessBlocker",
+    "ResumeDiffAnalysis",
+    "ResumeSectionDiff",
     "TailoredDocument",
+    "TailoredResume",
     "EmailDraft",
     "EmailType",
     "InterviewPlan",

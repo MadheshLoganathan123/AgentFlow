@@ -17,6 +17,39 @@ class ApplicationStatus(str, Enum):
     WITHDRAWN = "withdrawn"
 
 
+class DiffChangeType(str, Enum):
+    UNCHANGED = "unchanged"
+    ADDED = "added"
+    REMOVED = "removed"
+    MODIFIED = "modified"
+    REORDERED = "reordered"
+
+
+class ResumeSectionDiff(BaseModel):
+    """
+    Detailed diff for a specific section comparing base resume to tailored variant.
+    """
+    section_name: str = Field(..., description="e.g. 'summary', 'skills', 'experience', 'education'")
+    change_type: DiffChangeType
+    original_text: Optional[str] = None
+    tailored_text: Optional[str] = None
+    explanation: str = Field(default="", description="Explainable rationale for this change")
+    evidence_links: List[EvidenceReference] = Field(default_factory=list)
+
+
+class ResumeDiffAnalysis(BaseModel):
+    """
+    Overall diff analysis between base candidate resume and tailored resume variant.
+    """
+    base_word_count: int = 0
+    tailored_word_count: int = 0
+    emphasized_skills: List[str] = Field(default_factory=list)
+    deprioritized_skills: List[str] = Field(default_factory=list)
+    section_diffs: List[ResumeSectionDiff] = Field(default_factory=list)
+    unsupported_claims: List[str] = Field(default_factory=list)
+    change_summary: str = Field(default="", description="High-level narrative of all adjustments made")
+
+
 class TailoredDocument(BaseModel):
     document_type: str = Field(..., description="'resume', 'cover_letter', 'answers'")
     title: str
@@ -25,6 +58,30 @@ class TailoredDocument(BaseModel):
     changed_sections: List[str] = Field(default_factory=list)
     evidence_links: List[EvidenceReference] = Field(default_factory=list)
     unsupported_claim_warnings: List[str] = Field(default_factory=list)
+    diff_analysis: Optional[ResumeDiffAnalysis] = None
+    structured_resume: Optional[Dict[str, Any]] = None
+
+
+class TailoredResume(VersionedBaseModel):
+    """
+    Grounded, tailored resume variant matching a specific job posting.
+    Guaranteed zero-fabrication: all companies, titles, dates, and metrics are verified.
+    """
+    job_id: str
+    job_title: str
+    organization: str
+    candidate_name: str
+    professional_summary: str
+    emphasized_skills: List[str] = Field(default_factory=list)
+    other_skills: List[str] = Field(default_factory=list)
+    experience_entries: List[Dict[str, Any]] = Field(default_factory=list)
+    education_entries: List[Dict[str, Any]] = Field(default_factory=list)
+    full_markdown_text: str
+    diff_analysis: ResumeDiffAnalysis
+    changed_sections: List[str] = Field(default_factory=list)
+    evidence_links: List[EvidenceReference] = Field(default_factory=list)
+    unsupported_claim_warnings: List[str] = Field(default_factory=list)
+    is_grounded: bool = True
 
 
 class ApplicationPackage(VersionedBaseModel):

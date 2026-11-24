@@ -5,13 +5,16 @@
 
 ---
 
-### [ ] Phase 1: Resume Tailoring & Visible Diff Analysis Engine
+### [x] Phase 1: Resume Tailoring & Visible Diff Analysis Engine (COMPLETED)
 - **Goal**: Generate targeted resume variants tailored to shortlisted job listings strictly grounded in confirmed profile facts, with line-by-line diff summaries.
 - **Scope**:
-  - `TailoredResume` contract with section-by-section diffs, emphasized skills, omitted irrelevant sections, and evidence citations.
-  - Zero-fabrication enforcement: every tailored bullet must link to a confirmed profile work experience, project, or skill.
-  - Heuristic + lightweight LLM tailoring service with deterministic offline fallback.
-  - Visible side-by-side or structured comparison between base resume and tailored variant.
+  - `TailoredResume`, `ResumeDiffAnalysis`, `ResumeSectionDiff`, `DiffChangeType` contracts with section diffs, emphasized skills, omitted/other skills, and evidence citations.
+  - Zero-fabrication enforcement: every tailored bullet links to confirmed profile work experience; missing job requirements are flagged in `unsupported_claim_warnings` and never hallucinated.
+  - `ResumeTailoringService` featuring hybrid Hugging Face generation with deterministic offline fallback and weighted highlight re-ranking.
+  - `ApplicationPackageRepository` for database persistence with strict multi-tenant user isolation.
+  - REST endpoints under `/api/v1/documents` (`/tailor-resume`, `/compare-resume`, `/packages/{id}`, `/packages/by-job/{id}`, `/packages/{id}/approve`).
+  - Typed frontend API client methods in `apps/web/src/lib/api.ts`.
+  - Comprehensive unit test suite (`tests/unit/test_resume_tailoring.py`) and user isolation verification (`test_cross_account_package_isolation`).
 
 ---
 

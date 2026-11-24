@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from packages.db.base import Base
 from packages.db.repositories import (
+    ApplicationPackageRepository,
     CheckpointRepository,
     JobRepository,
     ProfileRepository,
@@ -188,5 +189,67 @@ async def test_cross_account_job_matches_isolation(async_test_session: AsyncSess
 
     bob_match_record = await job_repo.get_match(user_id=user_bob.id, job_id=job.id)
     assert bob_match_record is None, "Bob retrieved Alice's match evaluation."
+
+
+@pytest.mark.asyncio
+async def test_cross_account_package_isolation(async_test_session: AsyncSession):
+    """Verify that User A's tailored application packages are completely isolated from User B."""
+    user_repo = UserRepository(async_test_session)
+    job_repo = JobRepository(async_test_session)
+    package_repo = ApplicationPackageRepository(async_test_session)
+
+    user_alice = await user_repo.create(email="alice_pkg@example.com", full_name="Alice Tailoring")
+    user_bob = await user_repo.create(email="bob_pkg@example.com", full_name="Bob Tailoring")
+
+    job = await job_repo.upsert_job(
+        title="Senior Site Reliability Engineer",
+        organization="Meta",
+        location="Remote",
+        source_name="mock",
+        source_url="https://meta.com/careers/sre",
+        destination_url="https://meta.com/careers/sre",
+        content_hash="hash_meta_sre_01",
+        description_text="Scale global infrastructure",
+    )
+
+    pkg = await package_repo.save_package(
+        user_id=user_alice.id,
+        job_id=job.id,
+        tailored_resume={
+            "document_type": "resume",
+            "title": "Alice - SRE Resume",
+            "content_text": "Alice's proprietary infrastructure experience",
+        },
+        unsupported_claim_warnings=["Missing Kubernetes verification"],
+    )
+
+    # 1. Alice can retrieve her package
+    alice_pkg = await package_repo.get_package(user_id=user_alice.id, package_id=pkg.id)
+    assert alice_pkg is not None
+    assert alice_pkg.id == pkg.id
+
+    alice_by_job = await package_repo.get_package_by_job(user_id=user_alice.id, job_id=job.id)
+    assert alice_by_job is not None
+
+    alice_list = await package_repo.list_packages_for_user(user_id=user_alice.id)
+    assert len(alice_list) == 1
+
+    # 2. Bob cannot retrieve Alice's package by ID or job ID
+    bob_pkg = await package_repo.get_package(user_id=user_bob.id, package_id=pkg.id)
+    assert bob_pkg is None, "Bob accessed Alice's package by ID!"
+
+    bob_by_job = await package_repo.get_package_by_job(user_id=user_bob.id, job_id=job.id)
+    assert bob_by_job is None, "Bob accessed Alice's package by job ID!"
+
+    bob_list = await package_repo.list_packages_for_user(user_id=user_bob.id)
+    assert len(bob_list) == 0, "Bob listed Alice's application packages!"
+
+    # 3. Bob cannot approve or delete Alice's package
+    bob_approve = await package_repo.update_approval(user_id=user_bob.id, package_id=pkg.id, is_user_approved=True)
+    assert bob_approve is None, "Bob updated approval on Alice's package!"
+
+    bob_delete = await package_repo.delete_package(user_id=user_bob.id, package_id=pkg.id)
+    assert bob_delete is False, "Bob deleted Alice's package!"
+
 
 

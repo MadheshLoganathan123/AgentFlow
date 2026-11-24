@@ -13,6 +13,7 @@ from services.api.services.job_adapters import (
 from services.api.services.matcher import MatchRankingService
 from services.api.services.normalizer import JobNormalizerService
 from services.api.services.retrieval import JobRetrievalService
+from services.api.services.tailoring import ResumeTailoringService
 
 __all__ = [
     "ResumeExtractorService",
@@ -20,6 +21,7 @@ __all__ = [
     "JobNormalizerService",
     "MatchRankingService",
     "JobRetrievalService",
+    "ResumeTailoringService",
     "BaseJobSourceAdapter",
     "MockJobSourceAdapter",
     "GreenhouseJobSourceAdapter",
