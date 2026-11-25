@@ -508,15 +508,18 @@ async def review_package_endpoint(
         )
     job = job_repo._to_contract(job_model)
 
+    resume_dict = dict(pkg.tailored_resume) if isinstance(pkg.tailored_resume, dict) else {}
+    cover_letter_dict = dict(pkg.cover_letter) if isinstance(pkg.cover_letter, dict) else None
+
     pkg_contract = ApplicationPackage(
-        id=pkg.id,
-        user_id=pkg.user_id,
-        job_id=pkg.job_id,
-        tailored_resume=TailoredDocument(**pkg.tailored_resume),
-        cover_letter=TailoredDocument(**pkg.cover_letter) if pkg.cover_letter else None,
-        form_answers=pkg.form_answers or {},
-        unsupported_claim_warnings=pkg.unsupported_claim_warnings or [],
-        is_user_approved=pkg.is_user_approved,
+        id=str(pkg.id),
+        user_id=str(pkg.user_id),
+        job_id=str(pkg.job_id),
+        tailored_resume=TailoredDocument.model_validate(resume_dict),
+        cover_letter=TailoredDocument.model_validate(cover_letter_dict) if cover_letter_dict else None,
+        form_answers=dict(pkg.form_answers or {}),
+        unsupported_claim_warnings=list(pkg.unsupported_claim_warnings or []),
+        is_user_approved=bool(pkg.is_user_approved),
         approved_at=pkg.approved_at,
     )
 
