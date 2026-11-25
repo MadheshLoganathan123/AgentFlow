@@ -84,6 +84,59 @@ class TailoredResume(VersionedBaseModel):
     is_grounded: bool = True
 
 
+class CoverLetterParagraph(BaseModel):
+    """
+    Structured paragraph within a tailored cover letter with provenance evidence.
+    """
+    paragraph_type: str = Field(..., description="'opening', 'core_competency', 'project_highlight', 'company_alignment', 'closing'")
+    text: str
+    evidence_links: List[EvidenceReference] = Field(default_factory=list)
+    grounded_claims: List[str] = Field(default_factory=list)
+    unsupported_claims: List[str] = Field(default_factory=list)
+
+
+class CoverLetter(VersionedBaseModel):
+    """
+    Cover letter generated strictly from confirmed candidate facts with provenance citations.
+    """
+    job_id: str
+    job_title: str
+    organization: str
+    candidate_name: str
+    salutation: str = "Dear Hiring Team,"
+    paragraphs: List[CoverLetterParagraph] = Field(default_factory=list)
+    full_text: str
+    evidence_links: List[EvidenceReference] = Field(default_factory=list)
+    unsupported_claim_warnings: List[str] = Field(default_factory=list)
+    quality_score: float = 100.0
+    is_grounded: bool = True
+
+
+class ApplicationQuestionAnswer(BaseModel):
+    """
+    Answer drafted for an application question with evidence citation or missing-input warning.
+    """
+    question_id: str
+    question: str
+    answer: str
+    confidence_score: float = 1.0
+    evidence_links: List[EvidenceReference] = Field(default_factory=list)
+    requires_user_input: bool = False
+    missing_evidence_reason: Optional[str] = None
+    unsupported_claim_warnings: List[str] = Field(default_factory=list)
+
+
+class ApplicationQuestionSet(VersionedBaseModel):
+    """
+    Collection of drafted answers for standard or job-specific application questions.
+    """
+    job_id: str
+    answers: List[ApplicationQuestionAnswer] = Field(default_factory=list)
+    total_questions: int = 0
+    requires_user_input_count: int = 0
+    unsupported_claims_count: int = 0
+
+
 class ApplicationPackage(VersionedBaseModel):
     """
     Generated application package grounded strictly in confirmed profile facts.

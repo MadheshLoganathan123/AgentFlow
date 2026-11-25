@@ -18,12 +18,16 @@
 
 ---
 
-### [ ] Phase 2: Fact-Grounded Cover Letter & Application Question Drafter
-- **Goal**: Produce targeted cover letters and answer common application questions with explicit unsupported-claim warnings.
+### [x] Phase 2: Fact-Grounded Cover Letter & Application Question Drafter (COMPLETED)
+- **Goal**: Produce targeted cover letters and answer common application questions with explicit unsupported-claim warnings and Policy Reviewer quality gates.
 - **Scope**:
-  - `CoverLetter` and `ApplicationQuestionAnswer` schemas with paragraph-level provenance linking.
-  - Policy & Quality Reviewer check: scans generated text for unconfirmed employers, dates, degrees, metrics, or achievements.
-  - Missing-evidence flags requiring user input when an application question cannot be answered from profile data alone.
+  - `CoverLetter`, `CoverLetterParagraph`, `ApplicationQuestionAnswer`, and `ApplicationQuestionSet` schemas with paragraph-level provenance linking.
+  - `CoverLetterAndQuestionService` with zero-fabrication enforcement: missing candidate skills are excluded and flagged rather than hallucinated.
+  - `PolicyReviewerService` (Agent Role 9): audits documents and packages for unsupported claims, phantom employers, unconfirmed degrees, privacy leaks (SSN, credit card, tokens), and suspicious job scam indicators.
+  - Question answering engine: provides verified answers for authorization, notice period, compensation, and tech stack; sets `requires_user_input=True` when evidence is missing.
+  - REST endpoints: `POST /api/v1/documents/generate-cover-letter`, `POST /api/v1/documents/draft-answers`, `POST /api/v1/documents/review-package`.
+  - Frontend TypeScript contracts and `documentsApi` wrappers in `apps/web/src/lib/api.ts`.
+  - Exhaustive unit test suite (`tests/unit/test_cover_letter_and_questions.py`) passing 8/8 tests.
 
 ---
 

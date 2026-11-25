@@ -264,6 +264,67 @@ export interface TailorResumeResponse {
   message: string;
 }
 
+// ─── Cover Letter & Application Answers Contracts (Week 3, Phase 2) ──────────
+
+export interface CoverLetterParagraph {
+  paragraph_type: string;
+  text: string;
+  evidence_links?: Array<{ source_type: string; source_identifier: string; raw_snippet: string }>;
+  grounded_claims: string[];
+  unsupported_claims: string[];
+}
+
+export interface CoverLetter {
+  job_id: string;
+  job_title: string;
+  organization: string;
+  candidate_name: string;
+  salutation: string;
+  paragraphs: CoverLetterParagraph[];
+  full_text: string;
+  evidence_links: Array<{ source_type: string; source_identifier: string; raw_snippet: string }>;
+  unsupported_claim_warnings: string[];
+  quality_score: number;
+  is_grounded: boolean;
+}
+
+export interface ApplicationQuestionAnswer {
+  question_id: string;
+  question: string;
+  answer: string;
+  confidence_score: number;
+  evidence_links: Array<{ source_type: string; source_identifier: string; raw_snippet: string }>;
+  requires_user_input: boolean;
+  missing_evidence_reason?: string | null;
+  unsupported_claim_warnings: string[];
+}
+
+export interface ApplicationQuestionSet {
+  job_id: string;
+  answers: ApplicationQuestionAnswer[];
+  total_questions: number;
+  requires_user_input_count: number;
+  unsupported_claims_count: number;
+}
+
+export interface PolicyViolation {
+  check_type: string;
+  severity: "info" | "warning" | "blocker";
+  message: string;
+  offending_field_or_text?: string | null;
+  remediation_hint?: string | null;
+}
+
+export interface PolicyReviewResult {
+  is_safe_to_proceed: boolean;
+  overall_quality_score: number;
+  violations: PolicyViolation[];
+  requires_human_approval: boolean;
+  approval_gate_reason?: string | null;
+  redactions: Array<{ field_name: string; redaction_type: string; redacted_preview: string }>;
+  audit_metadata: Record<string, any>;
+}
+
 export const documentsApi = {
   tailorResume: (body: {
     user_id: string;
@@ -279,6 +340,37 @@ export const documentsApi = {
 
   compareResume: (body: { candidate_profile: any; job_listing: any }) =>
     request<ResumeDiffAnalysis>("/api/v1/documents/compare-resume", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  generateCoverLetter: (body: {
+    user_id: string;
+    job_id?: string;
+    candidate_profile?: any;
+    job_listing?: any;
+    package_id?: string;
+  }) =>
+    request<CoverLetter>("/api/v1/documents/generate-cover-letter", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  draftAnswers: (body: {
+    user_id: string;
+    job_id?: string;
+    candidate_profile?: any;
+    job_listing?: any;
+    custom_questions?: string[];
+    package_id?: string;
+  }) =>
+    request<ApplicationQuestionSet>("/api/v1/documents/draft-answers", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  reviewPackage: (body: { user_id: string; package_id: string }) =>
+    request<PolicyReviewResult>("/api/v1/documents/review-package", {
       method: "POST",
       body: JSON.stringify(body),
     }),
