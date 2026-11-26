@@ -390,3 +390,91 @@ export const documentsApi = {
       }
     ),
 };
+
+// ─── Professional Email Drafting Contracts (Week 3, Phase 3) ─────────────────
+
+export type EmailType =
+  | "recruiter_outreach"
+  | "referral_request"
+  | "hiring_manager_note"
+  | "thank_you"
+  | "follow_up";
+
+export type EmailTone = "professional" | "conversational" | "executive";
+
+export interface EmailVariantItem {
+  tone: EmailTone;
+  subject: string;
+  body: string;
+  call_to_action: string;
+}
+
+export interface EmailDraft {
+  id?: string;
+  user_id?: string;
+  job_id?: string;
+  email_type: EmailType;
+  recipient_name?: string | null;
+  recipient_role?: string | null;
+  subject: string;
+  body: string;
+  call_to_action: string;
+  tone: string;
+  recipient_assumptions: string[];
+  personalization_evidence: Array<{ source_type: string; source_identifier: string; raw_snippet: string }>;
+  missing_recipient_warnings: string[];
+  variants: string[];
+  structured_variants?: EmailVariantItem[];
+  is_approved_by_user: boolean;
+}
+
+export const emailsApi = {
+  generate: (body: {
+    user_id: string;
+    job_id?: string;
+    email_type?: EmailType;
+    recipient_name?: string;
+    recipient_role?: string;
+    tone?: EmailTone;
+    extra_context?: string;
+    candidate_profile?: any;
+    job_listing?: any;
+    save_to_drafts?: boolean;
+  }) =>
+    request<EmailDraft>("/api/v1/emails/generate", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  listDrafts: (userId: string, jobId?: string, emailType?: string) => {
+    const qs = new URLSearchParams({ user_id: userId });
+    if (jobId) qs.set("job_id", jobId);
+    if (emailType) qs.set("email_type", emailType);
+    return request<EmailDraft[]>(`/api/v1/emails/drafts?${qs.toString()}`);
+  },
+
+  getDraft: (draftId: string, userId: string) =>
+    request<EmailDraft>(`/api/v1/emails/drafts/${draftId}?user_id=${userId}`),
+
+  updateDraft: (
+    draftId: string,
+    body: {
+      user_id: string;
+      subject?: string;
+      body?: string;
+      call_to_action?: string;
+      tone?: string;
+      is_approved_by_user?: boolean;
+    }
+  ) =>
+    request<EmailDraft>(`/api/v1/emails/drafts/${draftId}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  deleteDraft: (draftId: string, userId: string) =>
+    request<{ message: string; id: string }>(
+      `/api/v1/emails/drafts/${draftId}?user_id=${userId}`,
+      { method: "DELETE" }
+    ),
+};

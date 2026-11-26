@@ -23,7 +23,7 @@ from packages.contracts.application import (
     TailoredResume,
 )
 from packages.contracts.base import EvidenceReference, VersionedBaseModel, utc_now
-from packages.contracts.email import EmailDraft, EmailType
+from packages.contracts.email import EmailDraft, EmailTone, EmailType, EmailVariantItem
 from packages.contracts.interview import (
     InterviewPlan,
     InterviewQuestion,
@@ -100,7 +100,9 @@ __all__ = [
     "TailoredDocument",
     "TailoredResume",
     "EmailDraft",
+    "EmailTone",
     "EmailType",
+    "EmailVariantItem",
     "InterviewPlan",
     "InterviewQuestion",
     "QuestionSet",

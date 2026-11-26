@@ -6,6 +6,7 @@ from packages.db.base import Base
 from packages.db.repositories import (
     ApplicationPackageRepository,
     CheckpointRepository,
+    EmailDraftRepository,
     JobRepository,
     ProfileRepository,
     UserRepository,
@@ -250,6 +251,65 @@ async def test_cross_account_package_isolation(async_test_session: AsyncSession)
 
     bob_delete = await package_repo.delete_package(user_id=user_bob.id, package_id=pkg.id)
     assert bob_delete is False, "Bob deleted Alice's package!"
+
+
+@pytest.mark.asyncio
+async def test_cross_account_email_draft_isolation(async_test_session: AsyncSession):
+    """Verify that User A's generated email drafts are strictly isolated from User B."""
+    user_repo = UserRepository(async_test_session)
+    job_repo = JobRepository(async_test_session)
+    email_repo = EmailDraftRepository(async_test_session)
+
+    user_alice = await user_repo.create(email="alice_email@example.com", full_name="Alice Mail")
+    user_bob = await user_repo.create(email="bob_email@example.com", full_name="Bob Mail")
+
+    job = await job_repo.upsert_job(
+        title="Principal AI Engineer",
+        organization="Anthropic",
+        location="San Francisco, CA",
+        source_name="mock",
+        source_url="https://anthropic.com/jobs/1",
+        destination_url="https://anthropic.com/jobs/1",
+        content_hash="hash_anthropic_ai_01",
+        description_text="Lead LLM safety research and deployment",
+    )
+
+    draft = await email_repo.save_draft(
+        user_id=user_alice.id,
+        job_id=job.id,
+        email_type="recruiter_outreach",
+        subject="AI Research Inquiry - Alice",
+        body="Dear Recruiter, this is confidential outreach from Alice.",
+        call_to_action="Would you be open to an introductory conversation?",
+        tone="professional",
+    )
+
+    # 1. Alice can view and list her email drafts
+    alice_draft = await email_repo.get_draft(user_id=user_alice.id, draft_id=draft.id)
+    assert alice_draft is not None
+    assert alice_draft.id == draft.id
+
+    alice_list = await email_repo.list_drafts_for_user(user_id=user_alice.id)
+    assert len(alice_list) == 1
+
+    # 2. Bob cannot view or list Alice's draft
+    bob_draft = await email_repo.get_draft(user_id=user_bob.id, draft_id=draft.id)
+    assert bob_draft is None, "Bob accessed Alice's private email draft!"
+
+    bob_list = await email_repo.list_drafts_for_user(user_id=user_bob.id)
+    assert len(bob_list) == 0, "Bob listed Alice's email drafts!"
+
+    # 3. Bob cannot update or delete Alice's draft
+    bob_update = await email_repo.update_draft_content(
+        user_id=user_bob.id,
+        draft_id=draft.id,
+        subject="Hacked by Bob",
+    )
+    assert bob_update is None, "Bob updated Alice's draft!"
+
+    bob_delete = await email_repo.delete_draft(user_id=user_bob.id, draft_id=draft.id)
+    assert bob_delete is False, "Bob deleted Alice's draft!"
+
 
 
 

@@ -11,6 +11,7 @@ from services.api.services.job_adapters import (
     default_adapter_registry,
 )
 from services.api.services.cover_letter_service import CoverLetterAndQuestionService
+from services.api.services.email_writer import EmailWriterService
 from services.api.services.matcher import MatchRankingService
 from services.api.services.normalizer import JobNormalizerService
 from services.api.services.policy_reviewer import PolicyReviewerService
@@ -25,6 +26,7 @@ __all__ = [
     "JobRetrievalService",
     "ResumeTailoringService",
     "CoverLetterAndQuestionService",
+    "EmailWriterService",
     "PolicyReviewerService",
     "BaseJobSourceAdapter",
     "MockJobSourceAdapter",

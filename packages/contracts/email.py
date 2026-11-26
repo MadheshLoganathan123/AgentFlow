@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Optional
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from packages.contracts.base import EvidenceReference, VersionedBaseModel
 
@@ -14,12 +14,27 @@ class EmailType(str, Enum):
     FOLLOW_UP = "follow_up"
 
 
+class EmailTone(str, Enum):
+    PROFESSIONAL = "professional"
+    CONVERSATIONAL = "conversational"
+    EXECUTIVE = "executive"
+
+
+class EmailVariantItem(BaseModel):
+    tone: EmailTone
+    subject: str
+    body: str
+    call_to_action: str
+
+
 class EmailDraft(VersionedBaseModel):
     """
     Drafted outreach email grounded in candidate profile and job context.
     Never sent automatically in v1.
     """
     id: Optional[str] = None
+    user_id: Optional[str] = None
+    job_id: Optional[str] = None
     email_type: EmailType
     recipient_name: Optional[str] = None
     recipient_role: Optional[str] = None
@@ -31,5 +46,6 @@ class EmailDraft(VersionedBaseModel):
     personalization_evidence: List[EvidenceReference] = Field(default_factory=list)
     missing_recipient_warnings: List[str] = Field(default_factory=list)
     variants: List[str] = Field(default_factory=list)
+    structured_variants: List[EmailVariantItem] = Field(default_factory=list)
     is_approved_by_user: bool = False
 

@@ -31,16 +31,22 @@
 
 ---
 
-### [ ] Phase 3: Role-Specific Email Generation System (Recruiter, Referral, Follow-Up, Thank-You)
-- **Goal**: Generate role-specific, high-conversion email drafts for networking and application lifecycle management.
+### [x] Phase 3: Role-Specific Email Generation System (Recruiter, Referral, Follow-Up, Thank-You) (COMPLETED)
+- **Goal**: Generate role-specific, high-conversion email drafts for networking and application lifecycle management with strict safety invariants.
 - **Scope**:
-  - `EmailDraft` contract supporting 4 core templates:
-    1. Recruiter outreach (cold/warm)
-    2. Referral request (alumni/connection)
-    3. Application follow-up (post-submission)
-    4. Post-interview thank-you note
-  - Strict safety rule: **Never sends automatically**. All drafts are copyable/editable with recipient assumption checks.
-  - Configurable tone (formal, conversational, executive) and value-proposition emphasis.
+  - `EmailDraft`, `EmailTone`, `EmailType`, and `EmailVariantItem` contracts supporting 4 core categories:
+    1. Recruiter outreach / Hiring manager note (cold/warm)
+    2. Referral request (alumni/colleague/connection)
+    3. Application follow-up (post-submission status & timeline check)
+    4. Post-interview thank-you note (with contextual problem discussion)
+  - Strict safety rule: **Never sends automatically**. All drafts are editable and stored in draft status.
+  - Recipient assumption & missing recipient validation: alerts user if recipient name is missing and inserts clear placeholder.
+  - Personalization evidence linking to confirmed profile facts (`personalization_evidence`).
+  - 3 structured tone variants generated per request: `professional`, `conversational`, `executive`.
+  - `EmailDraftRepository` with full CRUD and multi-tenant isolation.
+  - REST endpoints under `/api/v1/emails`: `POST /generate`, `GET /drafts`, `GET /drafts/{id}`, `PATCH /drafts/{id}`, `DELETE /drafts/{id}`.
+  - Frontend TypeScript contracts and `emailsApi` wrapper in `apps/web/src/lib/api.ts`.
+  - Exhaustive test suite (`tests/unit/test_email_writer.py`) passing 8/8 tests and user isolation check (`test_cross_account_email_draft_isolation`).
 
 ---
 
