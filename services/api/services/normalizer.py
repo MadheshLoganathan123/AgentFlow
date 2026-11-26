@@ -1,9 +1,8 @@
 import hashlib
-import html
 import logging
 import re
 import uuid
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 from packages.contracts.base import utc_now
 from packages.contracts.job import (
@@ -255,7 +254,7 @@ class JobNormalizerService:
         # Add explicit tags if provided
         if extra_tags:
             for tag in extra_tags:
-                tag_title = tag.strip().title()
+                tag.strip().title()
                 for skill in ALL_KNOWN_SKILLS:
                     if skill.lower() == tag.lower():
                         req_skills.add(skill)
@@ -273,7 +272,7 @@ class JobNormalizerService:
             elif pref_text and re.search(pattern, pref_text, re.IGNORECASE):
                 pref_skills.add(skill)
 
-        return sorted(list(req_skills)), sorted(list(pref_skills - req_skills))
+        return sorted(req_skills), sorted(pref_skills - req_skills)
 
     @classmethod
     def compute_content_hash(cls, organization: str, title: str, description_text: str) -> str:

@@ -1,10 +1,8 @@
-from datetime import datetime
 import pytest
 from fastapi.testclient import TestClient
 
 from packages.contracts.base import utc_now
 from packages.contracts.job import (
-    JobListing,
     JobSeniority,
     RawJobPayload,
     WorkMode,

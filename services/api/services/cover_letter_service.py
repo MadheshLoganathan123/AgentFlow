@@ -1,17 +1,15 @@
-from datetime import datetime
 import logging
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional
 
 from packages.contracts.application import (
-    ApplicationPackage,
     ApplicationQuestionAnswer,
     ApplicationQuestionSet,
     CoverLetter,
     CoverLetterParagraph,
     TailoredDocument,
 )
-from packages.contracts.base import EvidenceReference, utc_now
+from packages.contracts.base import EvidenceReference
 from packages.contracts.job import JobListing
 from packages.contracts.profile import CandidateProfile
 from services.api.services.huggingface_client import HuggingFaceClient
@@ -46,7 +44,7 @@ class CoverLetterAndQuestionService:
         """
         # 1. Identify intersecting and missing skills
         cand_skills = {s.name.strip(): s for s in candidate.skills if s.name and s.name.strip()}
-        cand_skill_names_lower = {s.lower(): s for s in cand_skills.keys()}
+        cand_skill_names_lower = {s.lower(): s for s in cand_skills}
 
         job_req = [s.strip() for s in (job.skills_required or []) if s and s.strip()]
         job_pref = [s.strip() for s in (job.skills_preferred or []) if s and s.strip()]
@@ -158,7 +156,6 @@ class CoverLetterAndQuestionService:
         )
 
         # --- Paragraph 5: Closing ---
-        contact_items = [candidate.email, candidate.phone]
         contact_str = f" via {candidate.email}" if candidate.email else ""
         closing_text = (
             f"Thank you for your time and consideration. I welcome the opportunity to discuss how my verified background "
@@ -229,7 +226,7 @@ class CoverLetterAndQuestionService:
         # Standard question list
         cand_skills = [s.name for s in candidate.skills]
         top_skill = cand_skills[0] if cand_skills else "Python"
-        primary_exp = candidate.experience[0] if candidate.experience else None
+        candidate.experience[0] if candidate.experience else None
 
         if custom_questions:
             questions_to_process = list(custom_questions)
@@ -275,7 +272,6 @@ class CoverLetterAndQuestionService:
         """
         q_lower = question.lower()
         evidence: List[EvidenceReference] = []
-        warnings: List[str] = []
 
         # 1. Summary of experience
         if "summarize" in q_lower or "relevant experience" in q_lower:

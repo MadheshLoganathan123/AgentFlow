@@ -29,6 +29,7 @@ Key design principles
   missing (inherited from MatchRankingService).
 * All state mutations are additive dicts — no in-place mutation.
 """
+import contextlib
 import uuid
 from typing import Any, Dict, List, Optional
 
@@ -37,7 +38,6 @@ from langgraph.graph import END, START, StateGraph
 
 from services.orchestrator.checkpointer import BaseCheckpointer, MemoryCheckpointer
 from services.orchestrator.state import AgentFlowWorkflowState
-
 
 # ---------------------------------------------------------------------------
 # Node: job_discovery
@@ -290,10 +290,8 @@ def node_match_scoring_explanation(state: AgentFlowWorkflowState) -> Dict[str, A
         candidate = CandidateProfile(**extracted_profile)
         job_listings = []
         for jd in normalized_jobs_dicts:
-            try:
+            with contextlib.suppress(Exception):
                 job_listings.append(JobListing(**jd))
-            except Exception:
-                pass  # skip malformed entries
 
         ranked_pairs = MatchRankingService.rank_jobs(
             candidate=candidate,

@@ -67,7 +67,7 @@ class JobIngestionService:
         source_counts: Dict[str, int] = {}
         source_errors: Dict[str, str] = {}
 
-        for (src_name, _), res in zip(adapters_to_run, responses):
+        for (src_name, _), res in zip(adapters_to_run, responses, strict=False):
             if isinstance(res, Exception):
                 logger.error("Source '%s' ingestion failed: %s", src_name, res)
                 source_errors[src_name] = str(res)

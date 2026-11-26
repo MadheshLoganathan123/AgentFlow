@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
@@ -7,15 +6,13 @@ from sqlalchemy.pool import StaticPool
 
 from packages.contracts.application import (
     ApplicationPackage,
-    ApplicationQuestionAnswer,
     ApplicationQuestionSet,
     CoverLetter,
-    CoverLetterParagraph,
     TailoredDocument,
 )
 from packages.contracts.base import EvidenceReference
 from packages.contracts.job import JobListing
-from packages.contracts.policy import PolicyCheckType, PolicyReviewResult, PolicySeverity
+from packages.contracts.policy import PolicyCheckType, PolicySeverity
 from packages.contracts.profile import (
     CandidateProfile,
     Education,
@@ -24,10 +21,6 @@ from packages.contracts.profile import (
     WorkExperience,
 )
 from packages.db.base import Base
-from packages.db.repositories.job_repo import JobRepository
-from packages.db.repositories.package_repo import ApplicationPackageRepository
-from packages.db.repositories.profile_repo import ProfileRepository
-from packages.db.repositories.user_repo import UserRepository
 from services.api.main import app
 from services.api.services.cover_letter_service import CoverLetterAndQuestionService
 from services.api.services.policy_reviewer import PolicyReviewerService

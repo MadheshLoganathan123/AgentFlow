@@ -162,7 +162,7 @@ async def start_discovery_workflow(payload: DiscoveryStartRequest):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Workflow start failed: {exc!s}",
-        )
+        ) from exc
 
     return DiscoveryStatusResponse(
         workflow_id=workflow_id,
@@ -275,7 +275,7 @@ async def approve_shortlist(workflow_id: str, payload: ShortlistApprovalRequest)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Shortlist approval failed: {exc!s}",
-        )
+        ) from exc
 
     return ShortlistConfirmedResponse(
         workflow_id=workflow_id,

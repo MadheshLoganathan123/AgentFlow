@@ -1,12 +1,11 @@
 import logging
 import re
-from typing import Any, Dict, List, Optional, Set
+from typing import List, Optional
 
 from packages.contracts.application import (
     ApplicationPackage,
     ApplicationQuestionAnswer,
     CoverLetter,
-    TailoredResume,
 )
 from packages.contracts.job import JobListing
 from packages.contracts.policy import (

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
@@ -12,7 +12,6 @@ from packages.db.repositories.job_repo import JobRepository
 from packages.db.session import get_async_session
 from services.api.services.job_adapters import (
     IngestionRunSummary,
-    JobAdapterRegistry,
     JobIngestionService,
     default_adapter_registry,
 )

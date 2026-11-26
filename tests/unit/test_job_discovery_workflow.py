@@ -17,7 +17,6 @@ import pytest
 from fastapi.testclient import TestClient
 
 from packages.contracts.base import utc_now
-from packages.contracts.job import JobListing, JobSeniority, WorkMode
 from packages.contracts.profile import (
     CandidateProfile,
     SkillItem,
@@ -29,7 +28,6 @@ from services.api.main import app
 from services.orchestrator.checkpointer import MemoryCheckpointer
 from services.orchestrator.job_discovery_workflow import (
     JobDiscoveryAndMatchingWorkflow,
-    build_job_discovery_graph,
     node_awaiting_shortlist_approval,
     node_job_discovery,
     node_job_normalization_dedup,
@@ -37,7 +35,6 @@ from services.orchestrator.job_discovery_workflow import (
     node_shortlist_confirmed,
 )
 from services.orchestrator.state import AgentFlowWorkflowState
-
 
 # ---------------------------------------------------------------------------
 # Shared Fixtures

@@ -1,17 +1,14 @@
-from datetime import datetime
 import logging
 from typing import Any, Dict, List, Optional
-import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from packages.contracts.email import (
     EmailDraft,
     EmailTone,
     EmailType,
-    EmailVariantItem,
 )
 from packages.contracts.job import JobListing
 from packages.contracts.profile import CandidateProfile

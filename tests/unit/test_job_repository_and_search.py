@@ -1,13 +1,13 @@
+from datetime import timedelta
+from typing import AsyncGenerator
+
 import pytest
 import pytest_asyncio
-from datetime import datetime, timezone, timedelta
-from typing import AsyncGenerator
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
 from packages.contracts.base import utc_now
-from packages.contracts.job import JobListing, JobSeniority, WorkMode
 from packages.contracts.profile import (
     CandidateProfile,
     SkillItem,
@@ -16,7 +16,6 @@ from packages.contracts.profile import (
     WorkModePreference,
 )
 from packages.db.base import Base
-from packages.db.models import JobListingModel, JobMatchModel, SavedJobModel
 from packages.db.repositories.job_repo import JobRepository
 from packages.db.session import get_async_session
 from services.api.main import app
@@ -261,7 +260,7 @@ async def test_job_repo_match_persistence_and_isolation(async_test_session: Asyn
     assert match_a.composite_score == 88.5
 
     # Save match for User B on the same job
-    match_b = await repo.save_match(
+    await repo.save_match(
         user_id="user_bravo",
         profile_id="profile_bravo_02",
         job_id=job.id,

@@ -1,7 +1,7 @@
 import logging
 import re
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import timezone
+from typing import Dict, List, Optional, Tuple
 
 from packages.contracts.base import utc_now
 from packages.contracts.job import JobListing, JobSeniority, WorkMode
@@ -215,7 +215,7 @@ class MatchRankingService:
             s_lower = skill.lower()
             if s_lower in candidate_skills:
                 satisfied_req += 1
-                cand_item = candidate_skills[s_lower]
+                candidate_skills[s_lower]
                 matches.append(
                     RequirementMatch(
                         requirement=f"Required skill: {skill}",

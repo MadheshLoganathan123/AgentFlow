@@ -1,7 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from packages.contracts.base import utc_now
 from packages.contracts.job import (
     JobListing,
     JobSeniority,
@@ -15,7 +14,7 @@ from packages.contracts.profile import (
     WorkModePreference,
 )
 from services.api.main import app
-from services.api.services.job_adapters import MOCK_JOB_FIXTURES, MockJobSourceAdapter
+from services.api.services.job_adapters import MockJobSourceAdapter
 from services.api.services.matcher import MatchRankingService
 from services.api.services.normalizer import JobNormalizerService
 

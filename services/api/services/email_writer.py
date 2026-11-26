@@ -1,8 +1,7 @@
 import logging
-import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
-from packages.contracts.base import EvidenceReference, utc_now
+from packages.contracts.base import EvidenceReference
 from packages.contracts.email import (
     EmailDraft,
     EmailTone,

@@ -1,6 +1,5 @@
-import math
 import re
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import List, Optional, Set, Tuple
 
 from packages.contracts.job import JobListing
 from packages.contracts.match import MatchExplanation
@@ -8,7 +7,6 @@ from packages.contracts.profile import CandidateProfile
 from packages.db.models import JobListingModel
 from packages.db.repositories.job_repo import JobRepository
 from services.api.services.matcher import MatchRankingService
-from services.api.services.normalizer import JobNormalizerService
 
 
 class JobRetrievalService:

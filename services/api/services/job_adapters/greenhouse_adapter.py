@@ -1,8 +1,9 @@
+import contextlib
 import html
 import logging
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 import httpx
 
@@ -96,16 +97,13 @@ class GreenhouseJobSourceAdapter(BaseJobSourceAdapter):
                             if query_norm not in searchable:
                                 continue
 
-                        if loc_norm:
-                            if loc_norm not in raw_loc.lower():
-                                continue
+                        if loc_norm and loc_norm not in raw_loc.lower():
+                            continue
 
                         posted_at = None
                         if item.get("updated_at"):
-                            try:
+                            with contextlib.suppress(ValueError, TypeError):
                                 posted_at = datetime.fromisoformat(item["updated_at"].replace("Z", "+00:00"))
-                            except (ValueError, TypeError):
-                                pass
 
                         raw_payload = RawJobPayload(
                             source_name=self.source_name,

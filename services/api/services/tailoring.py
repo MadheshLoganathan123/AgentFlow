@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 import logging
 import re
 from typing import Any, Dict, List, Optional, Set, Tuple
@@ -11,9 +10,9 @@ from packages.contracts.application import (
     TailoredDocument,
     TailoredResume,
 )
-from packages.contracts.base import EvidenceReference, utc_now
+from packages.contracts.base import EvidenceReference
 from packages.contracts.job import JobListing
-from packages.contracts.profile import CandidateProfile, SkillItem, WorkExperience
+from packages.contracts.profile import CandidateProfile
 from services.api.services.huggingface_client import HuggingFaceClient
 
 logger = logging.getLogger("agentflow.tailoring")

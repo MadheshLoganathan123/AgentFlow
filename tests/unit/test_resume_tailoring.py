@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
@@ -24,7 +23,6 @@ from packages.contracts.profile import (
 from packages.db.base import Base
 from packages.db.repositories.job_repo import JobRepository
 from packages.db.repositories.package_repo import ApplicationPackageRepository
-from packages.db.repositories.profile_repo import ProfileRepository
 from packages.db.repositories.user_repo import UserRepository
 from services.api.main import app
 from services.api.services.tailoring import ResumeTailoringService

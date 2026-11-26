@@ -1,8 +1,9 @@
+import contextlib
 import html
 import logging
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 
 import httpx
 
@@ -85,10 +86,8 @@ class RemoteOKJobSourceAdapter(BaseJobSourceAdapter):
 
                     posted_at = None
                     if item.get("date"):
-                        try:
+                        with contextlib.suppress(ValueError, TypeError):
                             posted_at = datetime.fromisoformat(item["date"].replace("Z", "+00:00"))
-                        except (ValueError, TypeError):
-                            pass
 
                     # Extract salary string if available
                     salary_raw = None
