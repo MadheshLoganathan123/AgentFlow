@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from services.api.config import settings
-from services.api.routers import discovery, documents, emails, health, jobs, profile
+from services.api.routers import discovery, documents, emails, health, jobs, profile, research
 
 
 def create_app() -> FastAPI:
@@ -33,6 +33,7 @@ def create_app() -> FastAPI:
     app.include_router(discovery.router)
     app.include_router(documents.router)
     app.include_router(emails.router)
+    app.include_router(research.router)
 
     @app.get("/", tags=["Root"])
     async def root():

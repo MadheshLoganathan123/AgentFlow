@@ -25,12 +25,17 @@ from packages.contracts.application import (
 from packages.contracts.base import EvidenceReference, VersionedBaseModel, utc_now
 from packages.contracts.email import EmailDraft, EmailTone, EmailType, EmailVariantItem
 from packages.contracts.interview import (
+    CompanyResearchRequest,
     InterviewPlan,
     InterviewQuestion,
     PracticeFeedback,
     QuestionSet,
+    ReportSourceRequest,
     ResearchSource,
+    ResearchSummary,
     SourceCitation,
+    ValidateUrlRequest,
+    ValidateUrlResponse,
 )
 from packages.contracts.job import (
     JobListing,
@@ -107,6 +112,11 @@ __all__ = [
     "InterviewQuestion",
     "QuestionSet",
     "ResearchSource",
+    "ResearchSummary",
+    "ReportSourceRequest",
+    "ValidateUrlRequest",
+    "ValidateUrlResponse",
+    "CompanyResearchRequest",
     "PracticeFeedback",
     "SourceCitation",
     "ApprovalRequest",

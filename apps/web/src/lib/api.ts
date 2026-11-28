@@ -478,3 +478,95 @@ export const emailsApi = {
       { method: "DELETE" }
     ),
 };
+
+// ─── Research & Source Citation API ─────────────────────────────────────────
+
+export interface ResearchSource {
+  id?: string;
+  source_url: string;
+  source_title: string;
+  source_domain: string;
+  retrieved_at: string;
+  publication_date?: string | null;
+  is_reputable: boolean;
+  is_company_specific: boolean;
+  content_excerpt: string;
+  source_reliability_score: number;
+  content_hash?: string | null;
+  source_category: string;
+  is_reported: boolean;
+  report_reason?: string | null;
+}
+
+export interface ResearchSummary {
+  company_name: string;
+  target_role?: string | null;
+  job_id?: string | null;
+  sources: ResearchSource[];
+  company_specific_sources: ResearchSource[];
+  general_advice_sources: ResearchSource[];
+  tech_stack_observations: string[];
+  culture_and_values: string[];
+  recent_news_or_milestones: string[];
+  interview_topics_suggested: string[];
+  allowlist_status: string;
+  warnings: string[];
+  retrieved_at: string;
+}
+
+export interface ValidateUrlResponse {
+  url: string;
+  is_allowlisted: boolean;
+  domain: string;
+  category?: string | null;
+  message: string;
+}
+
+export const researchApi = {
+  researchCompany: (body: {
+    company_name: string;
+    role_title?: string;
+    job_id?: string;
+    force_refresh?: boolean;
+  }) =>
+    request<ResearchSummary>("/api/v1/research/company", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  listSources: (params?: {
+    company_name?: string;
+    job_id?: string;
+    include_reported?: boolean;
+    limit?: number;
+    offset?: number;
+  }) => {
+    const qs = new URLSearchParams();
+    if (params?.company_name) qs.set("company_name", params.company_name);
+    if (params?.job_id) qs.set("job_id", params.job_id);
+    if (params?.include_reported !== undefined) qs.set("include_reported", String(params.include_reported));
+    if (params?.limit) qs.set("limit", String(params.limit));
+    if (params?.offset) qs.set("offset", String(params.offset));
+    return request<ResearchSource[]>(`/api/v1/research/sources?${qs.toString()}`);
+  },
+
+  getSource: (sourceId: string) =>
+    request<ResearchSource>(`/api/v1/research/sources/${sourceId}`),
+
+  reportSource: (sourceId: string, reason: string) =>
+    request<ResearchSource>(`/api/v1/research/sources/${sourceId}/report`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    }),
+
+  deleteSource: (sourceId: string) =>
+    request<{ message: string; id: string }>(`/api/v1/research/sources/${sourceId}`, {
+      method: "DELETE",
+    }),
+
+  validateUrl: (url: string) =>
+    request<ValidateUrlResponse>("/api/v1/research/validate-url", {
+      method: "POST",
+      body: JSON.stringify({ url }),
+    }),
+};

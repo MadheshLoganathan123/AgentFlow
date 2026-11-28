@@ -291,6 +291,10 @@ class ResearchSourceModel(Base, TimestampMixin):
     retrieved_at = Column(DateTime(timezone=True), default=utc_now, nullable=False)
     excerpt = Column(Text, nullable=False)
     is_company_specific = Column(Boolean, default=True, nullable=False)
+    content_hash = Column(String(64), nullable=True)
+    source_category = Column(String(50), default="engineering_blog", nullable=False)
+    is_reported = Column(Boolean, default=False, nullable=False)
+    report_reason = Column(Text, nullable=True)
 
     job = relationship("JobListingModel", back_populates="research_sources")
 

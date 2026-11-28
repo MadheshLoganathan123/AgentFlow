@@ -17,6 +17,7 @@ from services.api.services.normalizer import JobNormalizerService
 from services.api.services.policy_reviewer import PolicyReviewerService
 from services.api.services.retrieval import JobRetrievalService
 from services.api.services.tailoring import ResumeTailoringService
+from services.api.services.web_research import WebResearchTool
 
 __all__ = [
     "ResumeExtractorService",
@@ -28,6 +29,7 @@ __all__ = [
     "CoverLetterAndQuestionService",
     "EmailWriterService",
     "PolicyReviewerService",
+    "WebResearchTool",
     "BaseJobSourceAdapter",
     "MockJobSourceAdapter",
     "GreenhouseJobSourceAdapter",

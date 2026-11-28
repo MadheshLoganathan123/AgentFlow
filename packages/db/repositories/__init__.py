@@ -4,6 +4,7 @@ from packages.db.repositories.email_repo import EmailDraftRepository
 from packages.db.repositories.job_repo import JobRepository
 from packages.db.repositories.package_repo import ApplicationPackageRepository
 from packages.db.repositories.profile_repo import ProfileRepository
+from packages.db.repositories.research_repo import ResearchSourceRepository
 from packages.db.repositories.user_repo import UserRepository
 
 __all__ = [
@@ -14,5 +15,6 @@ __all__ = [
     "JobRepository",
     "ApplicationPackageRepository",
     "EmailDraftRepository",
+    "ResearchSourceRepository",
 ]
 
